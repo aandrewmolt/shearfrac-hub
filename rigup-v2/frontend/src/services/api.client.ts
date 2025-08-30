@@ -26,30 +26,57 @@ class ApiClient {
     // Create the request promise
     const requestPromise = rateLimiter.throttle(endpoint, async () => {
       const url = `${API_CONFIG.BASE_URL}${endpoint}`;
+      const headers = getAuthHeaders();
+      
+      // Enhanced logging
+      console.log(`🔵 [API] Request: ${options.method || 'GET'} ${url}`);
+      console.log(`🔑 [API] Headers:`, {
+        'x-api-key': headers['x-api-key'] ? '***EXISTS***' : 'MISSING!',
+        'Content-Type': headers['Content-Type'],
+        'BASE_URL': API_CONFIG.BASE_URL
+      });
       
       try {
         const response = await fetch(url, {
           ...options,
           headers: {
-            ...getAuthHeaders(),
+            ...headers,
             ...options.headers,
           },
         });
         
+        console.log(`📍 [API] Response: ${response.status} ${response.statusText}`);
+        
         if (!response.ok) {
-          const error = await response.json().catch(() => ({
-            message: response.statusText,
-            status: response.status,
-          }));
+          const errorText = await response.text();
+          console.error(`❌ [API] Error Response Body:`, errorText);
+          
+          let error;
+          try {
+            error = JSON.parse(errorText);
+          } catch {
+            error = { message: errorText || response.statusText, status: response.status };
+          }
+          
           const apiError = new Error(error.message || `Request failed: ${response.status}`);
           (apiError as any).status = response.status;
           (apiError as any).statusCode = response.status;
+          (apiError as any).endpoint = endpoint;
+          (apiError as any).url = url;
           throw apiError;
         }
         
-        return response.json();
-      } catch (error) {
-        console.error(`API Request failed: ${endpoint}`, error);
+        const data = await response.json();
+        console.log(`✅ [API] Success: ${endpoint} returned ${Array.isArray(data) ? data.length + ' items' : 'data'}`);
+        return data;
+      } catch (error: any) {
+        console.error(`🚨 [API] Request failed:`, {
+          endpoint,
+          url,
+          error: error.message,
+          status: error.status,
+          stack: error.stack
+        });
         throw error;
       } finally {
         // Remove from in-flight requests after completion

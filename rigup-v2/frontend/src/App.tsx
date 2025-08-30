@@ -135,17 +135,23 @@ function App() {
     installAppRequestBlocker();
     
     // Build version indicator with timestamp to force cache refresh
-    const buildTime = '2025-01-30T' + new Date().toISOString().split('T')[1];
-    console.log('🚀 RigUp Build Version: 2025-01-30-ARCHITECTURE-FIX-V6');
+    const buildTime = new Date().toISOString();
+    console.log('🚀 RigUp Build Version: 2025-01-30-AUTO-SYNC-ENABLED-V7');
     console.log('🕐 Build deployed at:', buildTime);
-    console.log('✅ CRITICAL FIXES APPLIED:');
-    console.log('  1. getEquipmentTypes no longer fetches entire inventory');
-    console.log('  2. Core hook effect infinite loop fixed');
-    console.log('  3. Batch fetching implemented to prevent N+1');
-    console.log('  4. All auto-loading queries disabled');
+    console.log('✅ NEW FEATURES ENABLED:');
+    console.log('  1. Request blocking DISABLED - normal API flow');
+    console.log('  2. Auto-sync ENABLED on mount and focus');
+    console.log('  3. Network-first strategy active');
+    console.log('  4. Enhanced error logging enabled');
+    
+    // Log API configuration
+    console.log('🔧 API Configuration:', {
+      BASE_URL: (window as any).import?.meta?.env?.VITE_API_URL || 'Using hardcoded',
+      API_KEY: (window as any).import?.meta?.env?.VITE_API_KEY ? 'ENV VAR SET' : 'Using hardcoded',
+    });
     
     // Force version check
-    (window as any).__BUILD_VERSION = 'V5-CACHE-BUST-' + Date.now();
+    (window as any).__BUILD_VERSION = 'V7-AUTO-SYNC-' + Date.now();
     
     // Hide version after 5 seconds
     setTimeout(() => setShowVersion(false), 5000);
