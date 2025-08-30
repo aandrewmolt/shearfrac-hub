@@ -4,8 +4,13 @@
  */
 
 // Get API configuration from environment
-const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  'https://your-api-gateway-id.execute-api.us-east-1.amazonaws.com/dev';
+const API_BASE_URL = import.meta.env.VITE_AWS_API_URL || 
+  import.meta.env.VITE_API_URL ||
+  'https://wmh8r4eixg.execute-api.us-east-1.amazonaws.com/dev';
+
+// API Key for AWS API Gateway
+const API_KEY = import.meta.env.VITE_AWS_API_KEY || 
+  'C5b4WeRnJ82JRJo5ePOF36vfbB6AaBBS8MeLyx6A';
 
 // Rate limiter implementation
 class RateLimiter {
@@ -49,6 +54,7 @@ const getHeaders = (): HeadersInit => {
   const token = localStorage.getItem('aws_api_token');
   return {
     'Content-Type': 'application/json',
+    'x-api-key': API_KEY,
     ...(token && { 'Authorization': `Bearer ${token}` }),
   };
 };

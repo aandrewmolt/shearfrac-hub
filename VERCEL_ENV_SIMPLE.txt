@@ -1,0 +1,3 @@
+VITE_AWS_API_URL=https://wmh8r4eixg.execute-api.us-east-1.amazonaws.com/dev
+VITE_AWS_API_KEY=C5b4WeRnJ82JRJo5ePOF36vfbB6AaBBS8MeLyx6A
+VITE_API_MODE=aws

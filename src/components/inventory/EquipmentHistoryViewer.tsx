@@ -258,7 +258,7 @@ const EquipmentHistoryViewer: React.FC = () => {
                           <div className="flex items-center gap-2">
                             {getActionIcon(record.action)}
                             <Badge className={getActionColor(record.action)}>
-                              {record.action.replace('-', ' ')}
+                              {record.action ? String(record.action).replace('-', ' ') : 'unknown'}
                             </Badge>
                           </div>
                         </TableCell>
