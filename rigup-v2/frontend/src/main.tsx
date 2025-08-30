@@ -7,6 +7,9 @@ import './styles/responsive.css'
 // This will block all duplicate API requests at the fetch level
 import './services/globalRequestInterceptor'
 
+// Install diagnostics to debug the issue
+import './utils/requestDiagnostics'
+
 // Build version indicator - moved to App component to avoid module-level execution
 
 // Ensure dark mode is always active for corporate theme
