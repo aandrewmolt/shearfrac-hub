@@ -35,16 +35,16 @@ function getQueryClient() {
     queryClient = new QueryClient({
       defaultOptions: {
         queries: {
-          // AGGRESSIVE: Prevent ALL automatic refetching
-          staleTime: 1000 * 60 * 5, // 5 minutes - match cache TTL
+          // Enable auto-loading and sync
+          staleTime: 1000 * 30, // 30 seconds
           gcTime: 1000 * 60 * 10, // 10 minutes
-          refetchOnWindowFocus: false,
-          refetchOnReconnect: false,
-          refetchOnMount: false,
-          refetchInterval: false, // Never auto-refetch
-          retry: false, // Don't retry failed requests
-          retryDelay: 0,
-          networkMode: 'offlineFirst', // Use cache first
+          refetchOnWindowFocus: true, // Refresh when user returns
+          refetchOnReconnect: true, // Refresh on reconnect
+          refetchOnMount: true, // Load data on mount
+          refetchInterval: false, // No interval refetch
+          retry: 2, // Retry failed requests
+          retryDelay: 1000,
+          networkMode: 'online', // Use network first
         },
       },
     });
@@ -52,8 +52,10 @@ function getQueryClient() {
   return queryClient;
 }
 
-// Install request blocker IMMEDIATELY
+// Disabled request blocker - allow normal API calls
 const installAppRequestBlocker = () => {
+  return; // DISABLED - let requests flow normally
+  /*
   if ((window as any).__appBlocker) return;
   
   console.log('🛡️ Installing request blocker from App.tsx');
@@ -118,6 +120,7 @@ const installAppRequestBlocker = () => {
   });
   
   console.log('✅ App request blocker installed');
+  */
 };
 
 // Install immediately before component renders
@@ -144,8 +147,8 @@ function App() {
     // Force version check
     (window as any).__BUILD_VERSION = 'V5-CACHE-BUST-' + Date.now();
     
-    // Hide version after 30 seconds (longer to ensure you see it)
-    setTimeout(() => setShowVersion(false), 30000);
+    // Hide version after 5 seconds
+    setTimeout(() => setShowVersion(false), 5000);
     
     // Skip Turso validation - using AWS API now
     // logEnvironmentStatus();

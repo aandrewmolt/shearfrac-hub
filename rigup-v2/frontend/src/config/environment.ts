@@ -59,8 +59,8 @@ export const config = {
 
   // Feature Flags
   features: {
-    enableSync: getEnvVar('VITE_ENABLE_SYNC', 'true') === 'true',
-    enableOfflineMode: getEnvVar('VITE_ENABLE_OFFLINE', 'true') === 'true',
+    enableSync: true, // Always enable sync
+    enableOfflineMode: false, // Disable offline mode - use network
     enableDebugPanel: getEnvVar('VITE_ENABLE_DEBUG', 'false') === 'true',
     enableAnalytics: getEnvVar('VITE_ENABLE_ANALYTICS', 'false') === 'true',
     enableErrorReporting: getEnvVar('VITE_ENABLE_ERROR_REPORTING', 'true') === 'true',
