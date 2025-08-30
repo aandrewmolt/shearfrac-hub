@@ -1,12 +1,91 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Cable, Package, ArrowRight, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AppHeader from '@/components/AppHeader';
 
+// Install request blocker when dashboard loads
+const installRequestBlocker = () => {
+  if ((window as any).__checkBlocker) {
+    console.log('Request blocker already installed');
+    return;
+  }
+  
+  console.log('🛡️ Installing request blocker from MainDashboard');
+  
+  const originalFetch = window.fetch;
+  const requestMap = new Map();
+  const requestCounts = new Map();
+  
+  window.fetch = function(url: any, options: any) {
+    const urlString = typeof url === 'string' ? url : url.toString();
+    
+    // Only intercept API calls
+    if (!urlString.includes('/api/') && !urlString.includes('amazonaws.com')) {
+      return originalFetch.apply(window, arguments as any);
+    }
+    
+    const endpoint = urlString.split('?')[0];
+    const now = Date.now();
+    const counts = requestCounts.get(endpoint) || { count: 0, windowStart: now };
+    
+    if (now - counts.windowStart > 1000) {
+      counts.count = 1;
+      counts.windowStart = now;
+    } else {
+      counts.count++;
+    }
+    requestCounts.set(endpoint, counts);
+    
+    // Block if too many requests
+    if (counts.count > 5) {
+      console.error(`🚨 BLOCKED: ${endpoint} - ${counts.count} requests in 1 second!`);
+      return Promise.resolve(new Response(JSON.stringify([]), {
+        status: 200,
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      }));
+    }
+    
+    // Check for duplicate GET requests
+    const method = (options?.method || 'GET').toUpperCase();
+    if (method === 'GET') {
+      const cacheKey = urlString;
+      
+      if (requestMap.has(cacheKey)) {
+        console.warn(`🔄 DUPLICATE BLOCKED: ${endpoint}`);
+        return requestMap.get(cacheKey)!.then((r: Response) => r.clone());
+      }
+      
+      const promise = originalFetch.apply(window, arguments as any);
+      requestMap.set(cacheKey, promise);
+      
+      promise.finally(() => {
+        setTimeout(() => requestMap.delete(cacheKey), 100);
+      });
+      
+      return promise;
+    }
+    
+    return originalFetch.apply(window, arguments as any);
+  };
+  
+  // Add debug functions
+  (window as any).__checkBlocker = () => ({
+    inFlight: requestMap.size,
+    counts: Array.from(requestCounts.entries())
+  });
+  
+  console.log('✅ Request blocker installed from MainDashboard');
+};
+
 const MainDashboard = () => {
   const navigate = useNavigate();
+  
+  // Install blocker on mount
+  useEffect(() => {
+    installRequestBlocker();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-corporate">

@@ -52,12 +52,86 @@ function getQueryClient() {
   return queryClient;
 }
 
+// Install request blocker IMMEDIATELY
+const installAppRequestBlocker = () => {
+  if ((window as any).__appBlocker) return;
+  
+  console.log('🛡️ Installing request blocker from App.tsx');
+  
+  const originalFetch = window.fetch;
+  const requestMap = new Map<string, Promise<Response>>();
+  const requestCounts = new Map<string, { count: number; windowStart: number }>();
+  
+  window.fetch = function(url: any, options: any): Promise<Response> {
+    const urlString = typeof url === 'string' ? url : url.toString();
+    
+    if (!urlString.includes('/api/') && !urlString.includes('amazonaws.com')) {
+      return originalFetch.apply(window, arguments as any);
+    }
+    
+    const endpoint = urlString.split('?')[0];
+    const now = Date.now();
+    const counts = requestCounts.get(endpoint) || { count: 0, windowStart: now };
+    
+    if (now - counts.windowStart > 1000) {
+      counts.count = 1;
+      counts.windowStart = now;
+    } else {
+      counts.count++;
+    }
+    requestCounts.set(endpoint, counts);
+    
+    if (counts.count > 5) {
+      console.error(`🚨 APP BLOCKER: ${endpoint} - ${counts.count} requests!`);
+      return Promise.resolve(new Response('[]', {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }));
+    }
+    
+    const method = (options?.method || 'GET').toUpperCase();
+    if (method === 'GET') {
+      const cacheKey = urlString;
+      
+      if (requestMap.has(cacheKey)) {
+        console.warn(`🔄 APP DUPLICATE BLOCKED: ${endpoint}`);
+        return requestMap.get(cacheKey)!.then(r => r.clone());
+      }
+      
+      const promise = originalFetch.apply(window, arguments as any) as Promise<Response>;
+      requestMap.set(cacheKey, promise);
+      
+      promise.finally(() => {
+        setTimeout(() => requestMap.delete(cacheKey), 100);
+      });
+      
+      return promise;
+    }
+    
+    return originalFetch.apply(window, arguments as any);
+  };
+  
+  (window as any).__appBlocker = true;
+  (window as any).__checkBlocker = () => ({
+    inFlight: requestMap.size,
+    counts: Array.from(requestCounts.entries())
+  });
+  
+  console.log('✅ App request blocker installed');
+};
+
+// Install immediately before component renders
+installAppRequestBlocker();
+
 function App() {
   // Register service worker for offline support
   useEffect(() => {
+    // Double-check blocker is installed
+    installAppRequestBlocker();
+    
     // Build version indicator
-    console.log('🚀 RigUp Build Version: 2025-01-27-array-fixes');
-    console.log('✅ This build includes: Array.from null checks, Symbol.iterator fixes');
+    console.log('🚀 RigUp Build Version: 2025-01-30-BLOCKER-APP');
+    console.log('✅ This build includes: Request blocker in App.tsx');
     
     // Skip Turso validation - using AWS API now
     // logEnvironmentStatus();
