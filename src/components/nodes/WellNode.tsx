@@ -35,7 +35,7 @@ const WellNode: React.FC<WellNodeProps> = ({ id, data }) => {
   // Debug logging
   
   // Handle white wells - make text black and add black border
-  const isWhiteWell = backgroundColor === '#ffffff' || backgroundColor === '#FFFFFF' || backgroundColor.toLowerCase() === '#fff';
+  const isWhiteWell = backgroundColor === '#ffffff' || backgroundColor === '#FFFFFF' || String(backgroundColor || '').toLowerCase() === '#fff';
   const textColor = isWhiteWell ? '#000000' : '#ffffff';
   const finalBorderColor = isWhiteWell ? '#000000' : borderColor;
   const borderWidth = '2px';
@@ -102,7 +102,7 @@ const WellNode: React.FC<WellNodeProps> = ({ id, data }) => {
           <p className="text-xs opacity-80">Well #{data.wellNumber}</p>
           {data.gaugeType && (
             <div className="text-xs opacity-70 mt-1">
-              {data.gaugeType.replace('pressure-gauge-', '').replace('-', ' ')}
+              {String(data.gaugeType || '').replace('pressure-gauge-', '').replace('-', ' ')}
             </div>
           )}
         </div>

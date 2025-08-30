@@ -48,7 +48,7 @@ export class UserService {
     const id = uuidv4();
     await turso.execute({
       sql: 'INSERT INTO users (id, email, name) VALUES (?, ?, ?)',
-      args: [id, email, name || email.split('@')[0]]
+      args: [id, email, name || String(email || '').split('@')[0] || 'User']
     });
     return { id, email, name };
   }

@@ -97,7 +97,7 @@ class AwsDatabase {
           id: item.type,
           name: item.type,
           category: item.category || 'general',
-          code: item.type_code || item.type.substring(0, 3).toUpperCase(),
+          code: item.type_code || String(item.type || '').substring(0, 3).toUpperCase(),
           is_bulk: item.is_bulk || false
         });
       }
