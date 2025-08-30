@@ -1,7 +1,8 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "rm -rf dist && npm run build && echo 'BUILD VERSION: V5-FORCED' && date",
   "outputDirectory": "dist",
-  "framework": "vite",
+  "framework": null,
+  "installCommand": "npm install",
   "headers": [
     {
       "source": "/(.*)",
