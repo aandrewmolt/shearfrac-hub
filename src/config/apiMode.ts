@@ -4,7 +4,7 @@
  */
 
 // AWS API configuration
-const AWS_API_URL = import.meta.env.VITE_AWS_API_URL || import.meta.env.VITE_API_URL || 'https://wmh8r4eixg.execute-api.us-east-1.amazonaws.com/dev';
+const AWS_API_URL = import.meta.env.VITE_AWS_API_URL || import.meta.env.VITE_API_URL;
 
 // Always use AWS API mode
 export const API_MODE = 'aws';

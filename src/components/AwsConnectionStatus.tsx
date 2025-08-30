@@ -26,15 +26,16 @@ export function AwsConnectionStatus({ className }: { className?: string }) {
   const checkConnection = async () => {
     setStatus(prev => ({ ...prev, checking: true, error: null }));
     
-    const apiUrl = import.meta.env.VITE_API_URL;
+    const apiUrl = import.meta.env.VITE_AWS_API_URL || import.meta.env.VITE_API_URL;
+    const apiKey = import.meta.env.VITE_AWS_API_KEY;
     
-    // If no API URL configured, show as disconnected
-    if (!apiUrl || apiUrl.includes('your-api-gateway-id')) {
+    // If no API configured, show as not configured
+    if (!apiUrl || !apiKey) {
       setStatus({
         connected: false,
         checking: false,
         lastCheck: new Date(),
-        error: 'AWS API not configured',
+        error: 'AWS API not configured - check environment variables',
       });
       return;
     }
@@ -45,6 +46,7 @@ export function AwsConnectionStatus({ className }: { className?: string }) {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'x-api-key': apiKey,
         },
       });
 
@@ -56,11 +58,12 @@ export function AwsConnectionStatus({ className }: { className?: string }) {
           error: null,
         });
       } else {
-        // If health endpoint doesn't exist, try the jobs endpoint
-        const jobsResponse = await fetch(`${apiUrl}/jobs`, {
+        // If health endpoint doesn't exist, try the equipment endpoint
+        const jobsResponse = await fetch(`${apiUrl}/equipment`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            'x-api-key': apiKey,
           },
         });
         
