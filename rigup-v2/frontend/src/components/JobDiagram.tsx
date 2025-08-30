@@ -382,9 +382,10 @@ const JobDiagram: React.FC<JobDiagramProps> = ({ job }) => {
   }, [isInitialized, edges, migrateEdges, setEdges, saveBatched, createSaveData]);
   
   // Sync equipment status ONCE when job is first loaded
+  const hasSyncedRef = React.useRef(false);
   React.useEffect(() => {
-    // Only run once when first initialized
-    if (isInitialized && nodes.length > 0) {
+    // Only run once when first initialized and not already synced
+    if (isInitialized && nodes.length > 0 && !hasSyncedRef.current) {
       // Check all nodes for equipment that needs syncing
       const equipmentToSync = nodes
         .filter(node => node.data?.equipmentId && node.data?.assigned)
@@ -392,13 +393,15 @@ const JobDiagram: React.FC<JobDiagramProps> = ({ job }) => {
       
       if (equipmentToSync.length > 0) {
         console.log('One-time equipment sync for loaded job:', equipmentToSync);
+        // Mark as synced to prevent multiple runs
+        hasSyncedRef.current = true;
         // Just sync the inventory status once to load current state
         if (unifiedSyncEquipment) {
           unifiedSyncEquipment(); // Use unified sync system directly
         }
       }
     }
-  }, [isInitialized]); // Only depend on initialization state
+  }, [isInitialized, nodes.length]); // Only depend on initialization state and nodes length
   
   // Get equipment status for UI indicators
   const usage = getEquipmentUsage();

@@ -30,7 +30,7 @@ export const useUnifiedEquipmentSync = ({
   const [conflicts, setConflicts] = useState<any[]>([]);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle');
 
-  // Initialize the sync manager
+  // Initialize the sync manager only once
   useEffect(() => {
     unifiedEquipmentSync.initialize({
       eventSystem,
@@ -48,7 +48,9 @@ export const useUnifiedEquipmentSync = ({
         if (onSyncComplete) onSyncComplete();
       }
     });
-  }, [eventSystem, inventoryData, onEquipmentChange, onConflictDetected, onSyncComplete]);
+    // Only re-initialize if eventSystem changes (which should be never)
+    // Remove inventoryData from deps to prevent re-initialization on data changes
+  }, [eventSystem]); // Removed inventoryData, onEquipmentChange, onConflictDetected, onSyncComplete from deps
 
   // Equipment status change
   const syncEquipmentStatus = useCallback((equipmentId: string, newStatus: string, reason: string) => {

@@ -41,7 +41,7 @@ export const useApiEquipmentQueries = () => {
     staleTime: 60000,
   });
 
-  // Individual Equipment - fetch from AWS API
+  // Individual Equipment - fetch from AWS API with better caching
   const { data: individualEquipment = [], isLoading: equipmentLoading, refetch: refetchEquipment } = useQuery({
     queryKey: ['api-individual-equipment'],
     queryFn: async () => {
@@ -65,9 +65,12 @@ export const useApiEquipmentQueries = () => {
         return [];
       }
     },
-    staleTime: 30000, // 30 seconds
-    refetchInterval: false,
-    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes - increase from 30 seconds
+    gcTime: 10 * 60 * 1000, // 10 minutes cache time
+    refetchInterval: false, // Disable automatic refetch
+    refetchOnWindowFocus: false, // Disable refetch on window focus
+    refetchOnMount: false, // Don't refetch if data exists
+    refetchOnReconnect: false, // Don't refetch on reconnect
   });
 
   const isLoading = typesLoading || locationsLoading || equipmentLoading;

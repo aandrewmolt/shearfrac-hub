@@ -97,8 +97,10 @@ export const useApiInventoryMutations = (storageLocations: StorageLocation[]) =>
         description: 'Equipment created successfully',
       });
       
-      // Trigger refresh
-      window.dispatchEvent(new CustomEvent('equipment-updated'));
+      // Trigger refresh with source flag to prevent feedback loops
+      window.dispatchEvent(new CustomEvent('equipment-updated', {
+        detail: { source: 'mutation', skipSync: true }
+      }));
       
       return result;
     } catch (error) {
@@ -125,8 +127,10 @@ export const useApiInventoryMutations = (storageLocations: StorageLocation[]) =>
         });
       }
       
-      // Trigger refresh
-      window.dispatchEvent(new CustomEvent('equipment-updated'));
+      // Trigger refresh with source flag to prevent feedback loops
+      window.dispatchEvent(new CustomEvent('equipment-updated', {
+        detail: { source: 'mutation', skipSync: true }
+      }));
       
       return true;
     } catch (error) {
