@@ -132,8 +132,8 @@ function App() {
     installAppRequestBlocker();
     
     // Build version indicator
-    console.log('🚀 RigUp Build Version: 2025-01-30-QUERIES-DISABLED-V3');
-    console.log('✅ This build includes: ALL queries disabled with enabled:false');
+    console.log('🚀 RigUp Build Version: 2025-01-30-TURSO-DISABLED-V4');
+    console.log('✅ This build includes: TURSO hooks disabled (useJobs, useEquipmentQueries)');
     
     // Hide version after 30 seconds (longer to ensure you see it)
     setTimeout(() => setShowVersion(false), 30000);
@@ -199,7 +199,7 @@ function App() {
           fontSize: '20px',
           fontWeight: 'bold'
         }}>
-          VERSION: 2025-01-30-DISABLED-V3 | ALL QUERIES DISABLED | {new Date().toISOString()}
+          VERSION: 2025-01-30-TURSO-V4 | TURSO HOOKS DISABLED | {new Date().toISOString()}
         </div>
       )}
       <QueryClientProvider client={getQueryClient()}>

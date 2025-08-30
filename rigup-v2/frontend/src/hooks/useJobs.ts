@@ -39,6 +39,7 @@ export const useJobs = () => {
 
   const { data: jobs = [], isLoading } = useQuery({
     queryKey: ['jobs'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: async () => {
       const data = await tursoDb.getJobs();
       return (data || []).map(job => ({

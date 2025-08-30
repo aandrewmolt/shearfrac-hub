@@ -15,6 +15,7 @@ export const useEquipmentQueries = () => {
   // Equipment Types Query with caching
   const { data: equipmentTypes = [], isLoading: typesLoading, refetch: refetchTypes } = useQuery({
     queryKey: ['equipment-types'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: async () => {
       try {
         // Ensure schema is initialized before fetching data
@@ -44,6 +45,7 @@ export const useEquipmentQueries = () => {
   // Storage Locations Query with caching
   const { data: storageLocations = [], isLoading: locationsLoading, refetch: refetchLocations } = useQuery({
     queryKey: ['storage-locations'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: async () => {
       try {
         const locations = await tursoDb.getStorageLocations();
@@ -68,6 +70,7 @@ export const useEquipmentQueries = () => {
   // Individual Equipment Query with proper caching
   const { data: individualEquipment = [], isLoading: individualLoading, refetch: refetchIndividual } = useQuery({
     queryKey: ['individual-equipment'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: async () => {
       try {
         const equipment = await tursoDb.getIndividualEquipment();
