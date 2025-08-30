@@ -10,27 +10,28 @@ import type { EquipmentType, IndividualEquipment, StorageLocation } from '@/type
 import type { Node, Edge } from '@xyflow/react';
 
 class TursoDatabase {
-  // Cache for equipment data to prevent request storms
-  private equipmentCache: any = null;
-  private equipmentCacheTime: number = 0;
-  private readonly CACHE_TTL = 30000; // 30 seconds
+  // Removed local cache - now using singleton equipmentCache service
   // ==== EQUIPMENT TYPES ====
   async getEquipmentTypes() {
-    const equipment = await this.getCachedEquipment();
-    // Extract unique types from equipment list
-    const typesMap = new Map();
-    equipment.forEach((item: any) => {
-      if (item.type && !typesMap.has(item.type)) {
-        typesMap.set(item.type, {
-          id: item.type,
-          name: item.type,
-          category: item.category || 'general',
-          code: item.type_code || item.type.substring(0, 3).toUpperCase(),
-          is_bulk: item.is_bulk || false
-        });
-      }
+    // Cache equipment types separately to avoid unnecessary processing
+    return equipmentCache.get('turso-equipment-types', async () => {
+      console.log('[TursoDb] Computing equipment types from cached equipment...');
+      const equipment = await this.getCachedEquipment();
+      // Extract unique types from equipment list
+      const typesMap = new Map();
+      equipment.forEach((item: any) => {
+        if (item.type && !typesMap.has(item.type)) {
+          typesMap.set(item.type, {
+            id: item.type,
+            name: item.type,
+            category: item.category || 'general',
+            code: item.type_code || item.type.substring(0, 3).toUpperCase(),
+            is_bulk: item.is_bulk || false
+          });
+        }
+      });
+      return Array.from(typesMap.values());
     });
-    return Array.from(typesMap.values());
   }
   
   // Helper method to get cached equipment data
@@ -44,16 +45,22 @@ class TursoDatabase {
 
   async createEquipmentType(type: Partial<EquipmentType> & { name: string; category: string }) {
     // Equipment types are created implicitly through equipment
+    // Invalidate types cache when creating new type
+    equipmentCache.invalidate('turso-equipment-types');
     return { ...type, id: type.id || Date.now().toString() };
   }
 
   async updateEquipmentType(id: string, updates: Partial<EquipmentType>) {
     // Types are managed through equipment items
+    // Invalidate types cache when updating type
+    equipmentCache.invalidate('turso-equipment-types');
     return { id, ...updates };
   }
 
   async deleteEquipmentType(id: string) {
     // Cannot delete types directly
+    // Invalidate types cache when deleting type
+    equipmentCache.invalidate('turso-equipment-types');
     return { success: true };
   }
 
@@ -70,22 +77,25 @@ class TursoDatabase {
 
   async createIndividualEquipment(equipment: any) {
     const result = await apiClient.createEquipment(equipment);
-    // Invalidate cache after create
+    // Invalidate both caches after create
     equipmentCache.invalidate('turso-equipment-list');
+    equipmentCache.invalidate('turso-equipment-types');
     return result;
   }
 
   async updateIndividualEquipment(id: string, updates: any) {
     const result = await apiClient.updateEquipment(id, updates);
-    // Invalidate cache after update
+    // Invalidate both caches after update
     equipmentCache.invalidate('turso-equipment-list');
+    equipmentCache.invalidate('turso-equipment-types');
     return result;
   }
 
   async deleteIndividualEquipment(id: string) {
     const result = await apiClient.deleteEquipment(id);
-    // Invalidate cache after delete
+    // Invalidate both caches after delete
     equipmentCache.invalidate('turso-equipment-list');
+    equipmentCache.invalidate('turso-equipment-types');
     return result;
   }
 
@@ -104,7 +114,10 @@ class TursoDatabase {
       ...entry,
       timestamp: new Date().toISOString()
     });
-    return apiClient.updateEquipment(entry.equipmentId, { history });
+    const result = await apiClient.updateEquipment(entry.equipmentId, { history });
+    // Invalidate cache after adding history
+    equipmentCache.invalidate('turso-equipment-list');
+    return result;
   }
 
   async getEquipmentHistory(equipmentId: string) {
@@ -119,29 +132,48 @@ class TursoDatabase {
   }
 
   async createEquipment(equipment: any) {
-    return apiClient.createEquipment(equipment);
+    const result = await apiClient.createEquipment(equipment);
+    // Invalidate caches after create
+    equipmentCache.invalidate('turso-equipment-list');
+    equipmentCache.invalidate('turso-equipment-types');
+    return result;
   }
 
   async updateEquipment(id: string, updates: any) {
-    return apiClient.updateEquipment(id, updates);
+    const result = await apiClient.updateEquipment(id, updates);
+    // Invalidate caches after update
+    equipmentCache.invalidate('turso-equipment-list');
+    equipmentCache.invalidate('turso-equipment-types');
+    return result;
   }
 
   async deleteEquipment(id: string) {
-    return apiClient.deleteEquipment(id);
+    const result = await apiClient.deleteEquipment(id);
+    // Invalidate caches after delete
+    equipmentCache.invalidate('turso-equipment-list');
+    equipmentCache.invalidate('turso-equipment-types');
+    return result;
   }
 
   // ==== STORAGE LOCATIONS ====
   async getStorageLocations() {
-    // Return default locations for now
-    return [
-      { id: 'yard', name: 'Yard', type: 'primary' },
-      { id: 'shop', name: 'Shop', type: 'secondary' },
-      { id: 'field', name: 'Field', type: 'field' }
-    ];
+    // Cache storage locations to prevent repeated calls
+    return equipmentCache.get('turso-storage-locations', async () => {
+      console.log('[TursoDb] Getting storage locations...');
+      // Return default locations for now
+      return [
+        { id: 'yard', name: 'Yard', type: 'primary' },
+        { id: 'shop', name: 'Shop', type: 'secondary' },
+        { id: 'field', name: 'Field', type: 'field' }
+      ];
+    });
   }
 
   async createStorageLocation(location: any) {
-    return { ...location, id: location.id || Date.now().toString() };
+    const result = { ...location, id: location.id || Date.now().toString() };
+    // Invalidate storage locations cache
+    equipmentCache.invalidate('turso-storage-locations');
+    return result;
   }
 
   async addStorageLocation(location: any) {
@@ -149,10 +181,15 @@ class TursoDatabase {
   }
 
   async updateStorageLocation(id: string, updates: any) {
-    return { id, ...updates };
+    const result = { id, ...updates };
+    // Invalidate storage locations cache
+    equipmentCache.invalidate('turso-storage-locations');
+    return result;
   }
 
   async deleteStorageLocation(id: string) {
+    // Invalidate storage locations cache
+    equipmentCache.invalidate('turso-storage-locations');
     return { success: true };
   }
 
@@ -168,109 +205,177 @@ class TursoDatabase {
   }
 
   async createEquipmentItem(item: any) {
-    return apiClient.createEquipment({ ...item, is_bulk: true });
+    const result = await apiClient.createEquipment({ ...item, is_bulk: true });
+    // Invalidate caches after create
+    equipmentCache.invalidate('turso-equipment-list');
+    equipmentCache.invalidate('turso-equipment-types');
+    return result;
   }
 
   async updateEquipmentItem(id: string, updates: any) {
-    return apiClient.updateEquipment(id, { ...updates, is_bulk: true });
+    const result = await apiClient.updateEquipment(id, { ...updates, is_bulk: true });
+    // Invalidate caches after update
+    equipmentCache.invalidate('turso-equipment-list');
+    equipmentCache.invalidate('turso-equipment-types');
+    return result;
   }
 
   async deleteEquipmentItem(id: string) {
-    return apiClient.deleteEquipment(id);
+    const result = await apiClient.deleteEquipment(id);
+    // Invalidate caches after delete
+    equipmentCache.invalidate('turso-equipment-list');
+    equipmentCache.invalidate('turso-equipment-types');
+    return result;
   }
 
   // ==== JOBS ====
   async getJobs() {
-    return apiClient.getJobs();
+    // Cache jobs to prevent request storms
+    return equipmentCache.get('turso-jobs-list', async () => {
+      console.log('[TursoDb] Fetching jobs from API...');
+      return await apiClient.getJobs();
+    });
   }
 
   async getJob(id: string) {
-    return apiClient.getJob(id);
+    // Get from cached list to avoid individual API calls
+    const jobs = await this.getJobs();
+    return jobs.find((job: any) => job.id === id);
+  }
+  
+  // Alias for compatibility
+  async getJobById(id: string) {
+    return this.getJob(id);
   }
 
   async createJob(job: any) {
-    return apiClient.createJob(job);
+    const result = await apiClient.createJob(job);
+    // Invalidate cache after create
+    equipmentCache.invalidate('turso-jobs-list');
+    return result;
   }
 
   async updateJob(id: string, updates: any) {
-    return apiClient.updateJob(id, updates);
+    const result = await apiClient.updateJob(id, updates);
+    // Invalidate cache after update
+    equipmentCache.invalidate('turso-jobs-list');
+    return result;
   }
 
   async deleteJob(id: string) {
-    return apiClient.deleteJob(id);
+    const result = await apiClient.deleteJob(id);
+    // Invalidate cache after delete
+    equipmentCache.invalidate('turso-jobs-list');
+    return result;
   }
 
   async archiveJob(id: string) {
-    return apiClient.archiveJob(id);
+    const result = await apiClient.archiveJob(id);
+    // Invalidate cache after archive
+    equipmentCache.invalidate('turso-jobs-list');
+    return result;
   }
 
   async saveDiagram(jobId: string, nodes: Node[], edges: Edge[]) {
-    return apiClient.updateJob(jobId, { nodes, edges });
+    const result = await apiClient.updateJob(jobId, { nodes, edges });
+    // Invalidate jobs cache after diagram save
+    equipmentCache.invalidate('turso-jobs-list');
+    return result;
   }
 
   // ==== JOB PHOTOS ====
   async getJobPhotos(jobId: string) {
-    const job = await apiClient.getJob(jobId);
-    return job.photos || [];
+    const job = await this.getJob(jobId);
+    return job?.photos || [];
   }
 
   async addJobPhoto(photo: any) {
-    const job = await apiClient.getJob(photo.job_id);
-    const photos = job.photos || [];
+    const job = await this.getJob(photo.job_id);
+    const photos = job?.photos || [];
     photos.push(photo);
-    return apiClient.updateJob(photo.job_id, { photos });
+    const result = await apiClient.updateJob(photo.job_id, { photos });
+    // Invalidate jobs cache after adding photo
+    equipmentCache.invalidate('turso-jobs-list');
+    return result;
   }
 
   async updateJobPhoto(id: string, updates: any) {
     const jobId = updates.job_id;
-    const job = await apiClient.getJob(jobId);
-    const photos = job.photos || [];
+    const job = await this.getJob(jobId);
+    const photos = job?.photos || [];
     const index = photos.findIndex((p: any) => p.id === id);
     if (index !== -1) {
       photos[index] = { ...photos[index], ...updates };
       await apiClient.updateJob(jobId, { photos });
+      // Invalidate jobs cache after updating photo
+      equipmentCache.invalidate('turso-jobs-list');
     }
     return updates;
   }
 
   async deleteJobPhoto(id: string, jobId: string) {
-    const job = await apiClient.getJob(jobId);
-    const photos = (job.photos || []).filter((p: any) => p.id !== id);
+    const job = await this.getJob(jobId);
+    const photos = (job?.photos || []).filter((p: any) => p.id !== id);
     await apiClient.updateJob(jobId, { photos });
+    // Invalidate jobs cache after deleting photo
+    equipmentCache.invalidate('turso-jobs-list');
     return { success: true };
   }
 
   // ==== CONTACTS ====
   async getContacts() {
-    return apiClient.getContacts();
+    // Cache contacts to prevent request storms
+    return equipmentCache.get('turso-contacts-list', async () => {
+      console.log('[TursoDb] Fetching contacts from API...');
+      return await apiClient.getContacts();
+    });
   }
 
   async createContact(contact: any) {
-    return apiClient.createContact(contact);
+    const result = await apiClient.createContact(contact);
+    // Invalidate cache after create
+    equipmentCache.invalidate('turso-contacts-list');
+    return result;
   }
 
   async updateContact(id: string, updates: any) {
-    return apiClient.updateContact(id, updates);
+    const result = await apiClient.updateContact(id, updates);
+    // Invalidate cache after update
+    equipmentCache.invalidate('turso-contacts-list');
+    return result;
   }
 
   async deleteContact(id: string) {
-    return apiClient.deleteContact(id);
+    const result = await apiClient.deleteContact(id);
+    // Invalidate cache after delete
+    equipmentCache.invalidate('turso-contacts-list');
+    return result;
   }
 
   async getContactById(id: string) {
-    return apiClient.getContact(id);
+    // Get from cached list to avoid individual API calls
+    const contacts = await this.getContacts();
+    return contacts.find((contact: any) => contact.id === id);
   }
 
   // ==== USERS ====
   async getUsers() {
-    // Return mock users for now
-    return [
-      { id: 'user1', name: 'Admin', email: 'admin@example.com', role: 'admin' }
-    ];
+    // Cache users to prevent repeated calls
+    return equipmentCache.get('turso-users-list', async () => {
+      console.log('[TursoDb] Getting users...');
+      // Return mock users for now
+      return [
+        { id: 'user1', name: 'Admin', email: 'admin@example.com', role: 'admin' }
+      ];
+    });
   }
 
   async getCurrentUser() {
-    return { id: 'user1', name: 'Admin', email: 'admin@example.com', role: 'admin' };
+    // Cache current user to prevent repeated calls
+    return equipmentCache.get('turso-current-user', async () => {
+      console.log('[TursoDb] Getting current user...');
+      return { id: 'user1', name: 'Admin', email: 'admin@example.com', role: 'admin' };
+    });
   }
 
   // ==== BULK DEPLOYMENTS ====
@@ -280,36 +385,51 @@ class TursoDatabase {
   }
 
   async createBulkDeployment(deployment: any) {
-    return apiClient.deployEquipment({
+    const result = await apiClient.deployEquipment({
       equipmentId: deployment.equipment_type_id,
       jobId: deployment.job_id,
       quantity: deployment.quantity
     });
+    // Invalidate equipment cache after deployment
+    equipmentCache.invalidate('turso-equipment-list');
+    return result;
   }
 
   async updateBulkDeployment(id: string, updates: any) {
+    // Invalidate equipment cache after update
+    equipmentCache.invalidate('turso-equipment-list');
     return { id, ...updates };
   }
 
   async returnBulkDeployment(deploymentId: string, quantity: number) {
     const equipment = await this.getIndividualEquipmentById(deploymentId);
     if (equipment?.job_id) {
-      return apiClient.returnEquipment({
+      const result = await apiClient.returnEquipment({
         equipmentId: deploymentId,
         jobId: equipment.job_id,
         quantity
       });
+      // Invalidate equipment cache after return
+      equipmentCache.invalidate('turso-equipment-list');
+      return result;
     }
     return { success: false };
   }
 
   // ==== STORAGE TRANSFERS ====
   async getStorageTransfers() {
-    return [];
+    // Cache storage transfers to prevent repeated calls
+    return equipmentCache.get('turso-storage-transfers', async () => {
+      console.log('[TursoDb] Getting storage transfers...');
+      return [];
+    });
   }
 
   async createStorageTransfer(transfer: any) {
-    return { ...transfer, id: Date.now().toString(), status: 'completed' };
+    const result = { ...transfer, id: Date.now().toString(), status: 'completed' };
+    // Invalidate transfers cache
+    equipmentCache.invalidate('turso-storage-transfers');
+    return result;
   }
 
   // ==== LEGACY COMPATIBILITY - These should not be used! ====
