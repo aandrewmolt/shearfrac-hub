@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RigUp - Well Rig Visualizer</title>
     <meta name="description" content="Professional well rig visualization and equipment management platform">
+    <!-- Force cache refresh -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     
     <!-- EMERGENCY REQUEST BLOCKER - Must load FIRST before ANY other scripts -->
     <script>
@@ -108,6 +112,10 @@
         };
         
         console.log('✅ Request blocker installed. Check status with: __checkBlocker()');
+        
+        // Add version indicator
+        window.__APP_VERSION = '2025-01-30-BLOCKER-v3';
+        console.log('📌 App Version:', window.__APP_VERSION);
       })();
     </script>
   </head>
