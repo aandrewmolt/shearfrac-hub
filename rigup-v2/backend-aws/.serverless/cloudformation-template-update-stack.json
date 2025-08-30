@@ -376,7 +376,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/health.check",
         "Runtime": "nodejs16.x",
@@ -415,7 +415,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/jobs.list",
         "Runtime": "nodejs16.x",
@@ -454,7 +454,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/jobs.get",
         "Runtime": "nodejs16.x",
@@ -493,7 +493,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/jobs.create",
         "Runtime": "nodejs16.x",
@@ -532,7 +532,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/jobs.update",
         "Runtime": "nodejs16.x",
@@ -571,7 +571,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/jobs.delete",
         "Runtime": "nodejs16.x",
@@ -610,7 +610,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/diagrams.get",
         "Runtime": "nodejs16.x",
@@ -649,7 +649,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/diagrams.save",
         "Runtime": "nodejs16.x",
@@ -688,7 +688,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/equipment.list",
         "Runtime": "nodejs16.x",
@@ -727,7 +727,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/equipment.get",
         "Runtime": "nodejs16.x",
@@ -766,7 +766,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/equipment.create",
         "Runtime": "nodejs16.x",
@@ -805,7 +805,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/equipment.update",
         "Runtime": "nodejs16.x",
@@ -844,7 +844,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/equipment.updateStatus",
         "Runtime": "nodejs16.x",
@@ -883,7 +883,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/equipment.deploy",
         "Runtime": "nodejs16.x",
@@ -922,7 +922,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/equipment.return",
         "Runtime": "nodejs16.x",
@@ -961,7 +961,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/photos.getUploadUrl",
         "Runtime": "nodejs16.x",
@@ -1000,7 +1000,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/photos.getPhotoUrl",
         "Runtime": "nodejs16.x",
@@ -1039,7 +1039,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/photos.delete",
         "Runtime": "nodejs16.x",
@@ -1078,7 +1078,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/contacts.list",
         "Runtime": "nodejs16.x",
@@ -1117,7 +1117,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/contacts.get",
         "Runtime": "nodejs16.x",
@@ -1156,7 +1156,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/contacts.create",
         "Runtime": "nodejs16.x",
@@ -1195,7 +1195,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/contacts.update",
         "Runtime": "nodejs16.x",
@@ -1234,7 +1234,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/contacts.delete",
         "Runtime": "nodejs16.x",
@@ -1273,7 +1273,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/clients.list",
         "Runtime": "nodejs16.x",
@@ -1312,7 +1312,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/clients.create",
         "Runtime": "nodejs16.x",
@@ -1351,7 +1351,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/export.exportData",
         "Runtime": "nodejs16.x",
@@ -1390,7 +1390,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/import.importData",
         "Runtime": "nodejs16.x",
@@ -1429,7 +1429,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/rigup-backend/dev/1756523567763-2025-08-30T03:12:47.763Z/rigup-backend.zip"
+          "S3Key": "serverless/rigup-backend/dev/1756529155323-2025-08-30T04:45:55.323Z/rigup-backend.zip"
         },
         "Handler": "src/handlers/photos.listJobPhotos",
         "Runtime": "nodejs16.x",
@@ -1461,284 +1461,284 @@
         "ListJobPhotosLogGroup"
       ]
     },
-    "HealthCheckLambdaVersionZtmu6r54Wjp8uu9DvkmeXLMiWG4C8q2EZDePshgtLg": {
+    "HealthCheckLambdaVersionQgg2TqJOpzixpSOVLVKNl0E3SYMaHhfu98JK7lkBv0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "HealthCheckLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "GetJobsLambdaVersionoMxBMXY273xOzBVbWvwbyLAAew4pmH0MNm5h4Npto": {
+    "GetJobsLambdaVersionZqOOhc76MrOsyStlomUqU74C1HLGLp7lOnVz1V6iLY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetJobsLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "GetJobLambdaVersionHvzcynOzHzVApMmbRgvxgvLyH7vI5Qt26avAzRpLQ": {
+    "GetJobLambdaVersionGkidi8bPASZcFb4moDM0Muvw711UIgLYmJVv7UO4Bk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetJobLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "CreateJobLambdaVersionwf1Qhe3ADtsgJE8ZQGXC7x8eKIokkx57s3PpOrnjiq0": {
+    "CreateJobLambdaVersionkPVQVFHvQlOINGaFGkLJNIFOdpo0jTvRHlwRiEJDq74": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateJobLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "UpdateJobLambdaVersionGch0AE5vIPvcPtbiE8NOAxk7dQNouTcmZDRtaLDAvtY": {
+    "UpdateJobLambdaVersionK0n31W7wK4YC8DuYwm7NcCSlhPyMBKlVQU6MV8wh6iI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UpdateJobLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "DeleteJobLambdaVersion2OXF8lKzkXWZhHMimNl8c0nzihodMQ2NWXhLQBMz0": {
+    "DeleteJobLambdaVersionx7rb8cPc0PHgOa6nCEuv3ax30VMcKhWyAthWuvW8lk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DeleteJobLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "GetDiagramLambdaVersionWj0SP57m6Do75TmRRUV7uVi87iPc3k0BTevAdYqCPiQ": {
+    "GetDiagramLambdaVersionlwzgXlKjK3YIluCKvWY1JspyQWvdaiEkHYg1yOUw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetDiagramLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "SaveDiagramLambdaVersion2Os2I2hAsb6C5ETesJx5UfT3QWfjNY2EXZkwsMwu8eY": {
+    "SaveDiagramLambdaVersionJcdXabNEyLmGUweermLPyNV4OArQkxwepiRVDaaxo": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SaveDiagramLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "GetEquipmentLambdaVersion9lXMiIrnMlVvtDGaJPInRBfKLnoFhvMCixursl7I": {
+    "GetEquipmentLambdaVersionr1UW1vw3rEeKIGMalgz6VjCaiom5snYvdy0NpfF12QQ": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetEquipmentLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "GetEquipmentItemLambdaVersionxGL6pfKzBMgtR1Q2TWG8amDcdZi9zTUb56z3z7PZgc": {
+    "GetEquipmentItemLambdaVersionQKUJxOyAemaSluB5o5CsKyBXtJbqtMqB20eDmsv1w": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetEquipmentItemLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "CreateEquipmentLambdaVersionbDzx5hhbioZ68E4uVBqcFmNpNqG8Yo64CW66xUmQ": {
+    "CreateEquipmentLambdaVersionNTWprxM1Sa4sFwcQZWKDTKRYAsfprU0bzxOFmGhp6c": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateEquipmentLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "UpdateEquipmentLambdaVersionQta7dbyAQJuytFRIr62QaJlt3flQgUvYIvLKYcBCJA": {
+    "UpdateEquipmentLambdaVersioncOLQQg44f6kEn5LpFTHyvmGA5s7VTvn11srot4My9vQ": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UpdateEquipmentLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "UpdateEquipmentStatusLambdaVersion304lQuwV3aTcCnQBEykhptReLQWAG1plNUftznbs": {
+    "UpdateEquipmentStatusLambdaVersionBZND2S1aXblSH9crQwrphtKqRXDNUqBXCa5C6ftK24": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UpdateEquipmentStatusLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "DeployEquipmentLambdaVersionnljPm8UDT8abDo5pYZWYT7EmojMvpRAw90s5RnCFs": {
+    "DeployEquipmentLambdaVersionPrCI7pqDwvKz5oA48n9hJ78fKXcAPZMfeXAjEEA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DeployEquipmentLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "ReturnEquipmentLambdaVersionucRTsWffc916NbaHhSAahc8BWtYNomHoZ56dcmnqI": {
+    "ReturnEquipmentLambdaVersionp5MZA9SktinC0Zrl1TvvNwGuLGxSxps4h8hRPAYSc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ReturnEquipmentLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "GetUploadUrlLambdaVersionhfSEm4EmEnSuRdutk8m7CRxkAjMSEM9iRV5zItBvKk": {
+    "GetUploadUrlLambdaVersions49c7zZlv68CbZJT9EjgCpKTaq5301vMQFxukk8": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetUploadUrlLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "GetPhotoUrlLambdaVersion6swgmhZOg9dRQrazsqJYQ5HJ6b59aMwVoFdExBW8N6I": {
+    "GetPhotoUrlLambdaVersionq2wmJADiq2eVLScf7f8wOGPYZT1qomtqlIjguAM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetPhotoUrlLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "DeletePhotoLambdaVersionzQuq4gKE6iUU9ImRk9sXAYGytsTRR0z9MfstvSmw": {
+    "DeletePhotoLambdaVersionnP4vWr7qVWSliuZGvRZ396Vi5w0tgI7riC0RSwHFBI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DeletePhotoLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "GetContactsLambdaVersion3b4DQCmdI9UK2mXXNjWjslmwv4c8aDqV7Ek2jK5g": {
+    "GetContactsLambdaVersionbJUckvf2iQ56OVNasAQf2jlzOstjdjRuUuaB80iI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetContactsLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "GetContactLambdaVersionGGpYs32ZNTm9Rd6t9e6ipJnDiKJXcNXDjFlKPnnJq4": {
+    "GetContactLambdaVersionCVI1p37Ksa3md1g2nVgwn57kinUU7OIOr7pVAj7ycwU": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetContactLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "CreateContactLambdaVersion5bBB2ZkNVdcA21Ovjuh1N9dj23F1WaZr1oVNmjJvo": {
+    "CreateContactLambdaVersiondyjJ4XUXaDLHupyng22LJaPY7bTRQl7IpQE0fUXF3w": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateContactLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "UpdateContactLambdaVersionGjAmFPAg5v6S0d3Jhsp6PCbNTiAjVRmy9gzq9MBIBhY": {
+    "UpdateContactLambdaVersion3kl8u7dSz3hQN4qjjPPqJa3Wa8lFeshpNwxJBD6C4PI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UpdateContactLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "DeleteContactLambdaVersionquAiumq7CQTDBWm3nc3IQSriNxGHqiCrfeyCYJfvBTk": {
+    "DeleteContactLambdaVersionlwCDhtIOTeleVaaKhfauefJYzJzzHHgAeLodWms8v0M": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DeleteContactLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "GetClientsLambdaVersionWBaoHS1MlZwoHtDzkt0KKM2BCteZ0fPTkJGODNXW5w": {
+    "GetClientsLambdaVersionCYIm9hsNo0gEXrAoQz6dx1PndegRCFKa1Qgy9TFnR3s": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetClientsLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "CreateClientLambdaVersionhsYNAXG5Aci51PueHBy7JlEOmDQlSSnxTlFLFXPhbWI": {
+    "CreateClientLambdaVersionvKZ6qMJsAztgILH8pKkjzSSZw48JTtY5u9KRdMlEz7Y": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateClientLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "ExportDataLambdaVersionM4FoNEGbDxm9XK6bSzNFy4IUjvxYbEgdhQibEgRSE": {
+    "ExportDataLambdaVersionOKt5Y10qkB60IPWRGvEO89qFYnmwhsqfAc3SMrbUo4I": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ExportDataLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "ImportDataLambdaVersionCt4BuoT3v8pzDvtkz1eHNEzqX9txl7xkYXz6JIFO1jE": {
+    "ImportDataLambdaVersionoB2roQieCQPnCToGCAkVxCEnRb0Fi8dEw5szUuwtrs": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ImportDataLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
-    "ListJobPhotosLambdaVersionIzbCp8Wio2hLa67YlTOJPxYTy8r9CZ0DXvLJrDx10N8": {
+    "ListJobPhotosLambdaVersionJHIDGa7nw6owuApdH7ySCg3xR7PIBYEKwhopOiW7JU": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ListJobPhotosLambdaFunction"
         },
-        "CodeSha256": "Kpci2QbGTqvIGu0Ans9FQfzxAUfRuqTArtMcE8Awmkg="
+        "CodeSha256": "g4i5zWjdQSZbho5mBUVLJvO3HLdRCE/oGg2eQfLUHkQ="
       }
     },
     "ApiGatewayRestApi": {
@@ -4105,7 +4105,7 @@
         "ListJobPhotosLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1756523526892": {
+    "ApiGatewayDeployment1756529128148": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -5609,7 +5609,7 @@
     "HealthCheckLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "HealthCheckLambdaVersionZtmu6r54Wjp8uu9DvkmeXLMiWG4C8q2EZDePshgtLg"
+        "Ref": "HealthCheckLambdaVersionQgg2TqJOpzixpSOVLVKNl0E3SYMaHhfu98JK7lkBv0"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-HealthCheckLambdaFunctionQualifiedArn"
@@ -5618,7 +5618,7 @@
     "GetJobsLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetJobsLambdaVersionoMxBMXY273xOzBVbWvwbyLAAew4pmH0MNm5h4Npto"
+        "Ref": "GetJobsLambdaVersionZqOOhc76MrOsyStlomUqU74C1HLGLp7lOnVz1V6iLY"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-GetJobsLambdaFunctionQualifiedArn"
@@ -5627,7 +5627,7 @@
     "GetJobLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetJobLambdaVersionHvzcynOzHzVApMmbRgvxgvLyH7vI5Qt26avAzRpLQ"
+        "Ref": "GetJobLambdaVersionGkidi8bPASZcFb4moDM0Muvw711UIgLYmJVv7UO4Bk"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-GetJobLambdaFunctionQualifiedArn"
@@ -5636,7 +5636,7 @@
     "CreateJobLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateJobLambdaVersionwf1Qhe3ADtsgJE8ZQGXC7x8eKIokkx57s3PpOrnjiq0"
+        "Ref": "CreateJobLambdaVersionkPVQVFHvQlOINGaFGkLJNIFOdpo0jTvRHlwRiEJDq74"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-CreateJobLambdaFunctionQualifiedArn"
@@ -5645,7 +5645,7 @@
     "UpdateJobLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UpdateJobLambdaVersionGch0AE5vIPvcPtbiE8NOAxk7dQNouTcmZDRtaLDAvtY"
+        "Ref": "UpdateJobLambdaVersionK0n31W7wK4YC8DuYwm7NcCSlhPyMBKlVQU6MV8wh6iI"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-UpdateJobLambdaFunctionQualifiedArn"
@@ -5654,7 +5654,7 @@
     "DeleteJobLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DeleteJobLambdaVersion2OXF8lKzkXWZhHMimNl8c0nzihodMQ2NWXhLQBMz0"
+        "Ref": "DeleteJobLambdaVersionx7rb8cPc0PHgOa6nCEuv3ax30VMcKhWyAthWuvW8lk"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-DeleteJobLambdaFunctionQualifiedArn"
@@ -5663,7 +5663,7 @@
     "GetDiagramLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetDiagramLambdaVersionWj0SP57m6Do75TmRRUV7uVi87iPc3k0BTevAdYqCPiQ"
+        "Ref": "GetDiagramLambdaVersionlwzgXlKjK3YIluCKvWY1JspyQWvdaiEkHYg1yOUw"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-GetDiagramLambdaFunctionQualifiedArn"
@@ -5672,7 +5672,7 @@
     "SaveDiagramLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SaveDiagramLambdaVersion2Os2I2hAsb6C5ETesJx5UfT3QWfjNY2EXZkwsMwu8eY"
+        "Ref": "SaveDiagramLambdaVersionJcdXabNEyLmGUweermLPyNV4OArQkxwepiRVDaaxo"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-SaveDiagramLambdaFunctionQualifiedArn"
@@ -5681,7 +5681,7 @@
     "GetEquipmentLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetEquipmentLambdaVersion9lXMiIrnMlVvtDGaJPInRBfKLnoFhvMCixursl7I"
+        "Ref": "GetEquipmentLambdaVersionr1UW1vw3rEeKIGMalgz6VjCaiom5snYvdy0NpfF12QQ"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-GetEquipmentLambdaFunctionQualifiedArn"
@@ -5690,7 +5690,7 @@
     "GetEquipmentItemLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetEquipmentItemLambdaVersionxGL6pfKzBMgtR1Q2TWG8amDcdZi9zTUb56z3z7PZgc"
+        "Ref": "GetEquipmentItemLambdaVersionQKUJxOyAemaSluB5o5CsKyBXtJbqtMqB20eDmsv1w"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-GetEquipmentItemLambdaFunctionQualifiedArn"
@@ -5699,7 +5699,7 @@
     "CreateEquipmentLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateEquipmentLambdaVersionbDzx5hhbioZ68E4uVBqcFmNpNqG8Yo64CW66xUmQ"
+        "Ref": "CreateEquipmentLambdaVersionNTWprxM1Sa4sFwcQZWKDTKRYAsfprU0bzxOFmGhp6c"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-CreateEquipmentLambdaFunctionQualifiedArn"
@@ -5708,7 +5708,7 @@
     "UpdateEquipmentLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UpdateEquipmentLambdaVersionQta7dbyAQJuytFRIr62QaJlt3flQgUvYIvLKYcBCJA"
+        "Ref": "UpdateEquipmentLambdaVersioncOLQQg44f6kEn5LpFTHyvmGA5s7VTvn11srot4My9vQ"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-UpdateEquipmentLambdaFunctionQualifiedArn"
@@ -5717,7 +5717,7 @@
     "UpdateEquipmentStatusLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UpdateEquipmentStatusLambdaVersion304lQuwV3aTcCnQBEykhptReLQWAG1plNUftznbs"
+        "Ref": "UpdateEquipmentStatusLambdaVersionBZND2S1aXblSH9crQwrphtKqRXDNUqBXCa5C6ftK24"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-UpdateEquipmentStatusLambdaFunctionQualifiedArn"
@@ -5726,7 +5726,7 @@
     "DeployEquipmentLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DeployEquipmentLambdaVersionnljPm8UDT8abDo5pYZWYT7EmojMvpRAw90s5RnCFs"
+        "Ref": "DeployEquipmentLambdaVersionPrCI7pqDwvKz5oA48n9hJ78fKXcAPZMfeXAjEEA"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-DeployEquipmentLambdaFunctionQualifiedArn"
@@ -5735,7 +5735,7 @@
     "ReturnEquipmentLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ReturnEquipmentLambdaVersionucRTsWffc916NbaHhSAahc8BWtYNomHoZ56dcmnqI"
+        "Ref": "ReturnEquipmentLambdaVersionp5MZA9SktinC0Zrl1TvvNwGuLGxSxps4h8hRPAYSc"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-ReturnEquipmentLambdaFunctionQualifiedArn"
@@ -5744,7 +5744,7 @@
     "GetUploadUrlLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetUploadUrlLambdaVersionhfSEm4EmEnSuRdutk8m7CRxkAjMSEM9iRV5zItBvKk"
+        "Ref": "GetUploadUrlLambdaVersions49c7zZlv68CbZJT9EjgCpKTaq5301vMQFxukk8"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-GetUploadUrlLambdaFunctionQualifiedArn"
@@ -5753,7 +5753,7 @@
     "GetPhotoUrlLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetPhotoUrlLambdaVersion6swgmhZOg9dRQrazsqJYQ5HJ6b59aMwVoFdExBW8N6I"
+        "Ref": "GetPhotoUrlLambdaVersionq2wmJADiq2eVLScf7f8wOGPYZT1qomtqlIjguAM"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-GetPhotoUrlLambdaFunctionQualifiedArn"
@@ -5762,7 +5762,7 @@
     "DeletePhotoLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DeletePhotoLambdaVersionzQuq4gKE6iUU9ImRk9sXAYGytsTRR0z9MfstvSmw"
+        "Ref": "DeletePhotoLambdaVersionnP4vWr7qVWSliuZGvRZ396Vi5w0tgI7riC0RSwHFBI"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-DeletePhotoLambdaFunctionQualifiedArn"
@@ -5771,7 +5771,7 @@
     "GetContactsLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetContactsLambdaVersion3b4DQCmdI9UK2mXXNjWjslmwv4c8aDqV7Ek2jK5g"
+        "Ref": "GetContactsLambdaVersionbJUckvf2iQ56OVNasAQf2jlzOstjdjRuUuaB80iI"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-GetContactsLambdaFunctionQualifiedArn"
@@ -5780,7 +5780,7 @@
     "GetContactLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetContactLambdaVersionGGpYs32ZNTm9Rd6t9e6ipJnDiKJXcNXDjFlKPnnJq4"
+        "Ref": "GetContactLambdaVersionCVI1p37Ksa3md1g2nVgwn57kinUU7OIOr7pVAj7ycwU"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-GetContactLambdaFunctionQualifiedArn"
@@ -5789,7 +5789,7 @@
     "CreateContactLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateContactLambdaVersion5bBB2ZkNVdcA21Ovjuh1N9dj23F1WaZr1oVNmjJvo"
+        "Ref": "CreateContactLambdaVersiondyjJ4XUXaDLHupyng22LJaPY7bTRQl7IpQE0fUXF3w"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-CreateContactLambdaFunctionQualifiedArn"
@@ -5798,7 +5798,7 @@
     "UpdateContactLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UpdateContactLambdaVersionGjAmFPAg5v6S0d3Jhsp6PCbNTiAjVRmy9gzq9MBIBhY"
+        "Ref": "UpdateContactLambdaVersion3kl8u7dSz3hQN4qjjPPqJa3Wa8lFeshpNwxJBD6C4PI"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-UpdateContactLambdaFunctionQualifiedArn"
@@ -5807,7 +5807,7 @@
     "DeleteContactLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DeleteContactLambdaVersionquAiumq7CQTDBWm3nc3IQSriNxGHqiCrfeyCYJfvBTk"
+        "Ref": "DeleteContactLambdaVersionlwCDhtIOTeleVaaKhfauefJYzJzzHHgAeLodWms8v0M"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-DeleteContactLambdaFunctionQualifiedArn"
@@ -5816,7 +5816,7 @@
     "GetClientsLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetClientsLambdaVersionWBaoHS1MlZwoHtDzkt0KKM2BCteZ0fPTkJGODNXW5w"
+        "Ref": "GetClientsLambdaVersionCYIm9hsNo0gEXrAoQz6dx1PndegRCFKa1Qgy9TFnR3s"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-GetClientsLambdaFunctionQualifiedArn"
@@ -5825,7 +5825,7 @@
     "CreateClientLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateClientLambdaVersionhsYNAXG5Aci51PueHBy7JlEOmDQlSSnxTlFLFXPhbWI"
+        "Ref": "CreateClientLambdaVersionvKZ6qMJsAztgILH8pKkjzSSZw48JTtY5u9KRdMlEz7Y"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-CreateClientLambdaFunctionQualifiedArn"
@@ -5834,7 +5834,7 @@
     "ExportDataLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ExportDataLambdaVersionM4FoNEGbDxm9XK6bSzNFy4IUjvxYbEgdhQibEgRSE"
+        "Ref": "ExportDataLambdaVersionOKt5Y10qkB60IPWRGvEO89qFYnmwhsqfAc3SMrbUo4I"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-ExportDataLambdaFunctionQualifiedArn"
@@ -5843,7 +5843,7 @@
     "ImportDataLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ImportDataLambdaVersionCt4BuoT3v8pzDvtkz1eHNEzqX9txl7xkYXz6JIFO1jE"
+        "Ref": "ImportDataLambdaVersionoB2roQieCQPnCToGCAkVxCEnRb0Fi8dEw5szUuwtrs"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-ImportDataLambdaFunctionQualifiedArn"
@@ -5852,7 +5852,7 @@
     "ListJobPhotosLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ListJobPhotosLambdaVersionIzbCp8Wio2hLa67YlTOJPxYTy8r9CZ0DXvLJrDx10N8"
+        "Ref": "ListJobPhotosLambdaVersionJHIDGa7nw6owuApdH7ySCg3xR7PIBYEKwhopOiW7JU"
       },
       "Export": {
         "Name": "sls-rigup-backend-dev-ListJobPhotosLambdaFunctionQualifiedArn"

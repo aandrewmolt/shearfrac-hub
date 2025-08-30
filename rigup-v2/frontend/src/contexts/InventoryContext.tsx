@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 import { InventoryData } from '@/types/inventory';
 import { useApiEquipmentQueries } from '@/hooks/api/useApiEquipmentQueries';
 // import { useTursoEquipmentUtils } from '@/hooks/equipment/useTursoEquipmentUtils';  // Not needed with AWS
@@ -32,33 +32,45 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const { optimisticDeletes } = useInventoryRealtime(refetch);
 
   // Filter out optimistically deleted items
-  const filteredIndividualEquipment = safeFilter(
-    individualEquipment,
-    item => !optimisticDeletes.has(item.id)
+  const filteredIndividualEquipment = useMemo(() => 
+    safeFilter(
+      individualEquipment,
+      item => !optimisticDeletes.has(item.id)
+    ),
+    [individualEquipment, optimisticDeletes]
   );
 
   // Normalize equipment data for consistent field names
-  const normalizedEquipment = normalizeEquipmentArray(filteredIndividualEquipment);
+  const normalizedEquipment = useMemo(() => 
+    normalizeEquipmentArray(filteredIndividualEquipment),
+    [filteredIndividualEquipment]
+  );
 
-  // Combined data object with filtered and normalized equipment - NO LOCAL STORAGE
-  const data: InventoryData = {
+  // Combined data object with filtered and normalized equipment - MEMOIZED to prevent re-renders
+  const data: InventoryData = useMemo(() => ({
     equipmentTypes: safeArray(equipmentTypes),
     storageLocations: safeArray(storageLocations),
     individualEquipment: safeArray(normalizedEquipment),
     equipmentItems: safeArray([]), // Empty array for backward compatibility
     lastSync: new Date(),
-  };
+  }), [equipmentTypes, storageLocations, normalizedEquipment]);
 
-  // Helper methods using centralized location logic
-  const getEquipmentAtLocation = (locationId: string, locationType: 'storage' | 'job' = 'storage') => {
-    return filterEquipmentByLocation(data.individualEquipment, locationId, locationType);
-  };
+  // Helper methods using centralized location logic - memoized
+  const getEquipmentAtLocation = useMemo(() => 
+    (locationId: string, locationType: 'storage' | 'job' = 'storage') => {
+      return filterEquipmentByLocation(data.individualEquipment, locationId, locationType);
+    },
+    [data.individualEquipment]
+  );
   
-  const getEquipmentGroupedByLocation = () => {
-    return groupEquipmentByLocation(data.individualEquipment);
-  };
+  const getEquipmentGroupedByLocation = useMemo(() => 
+    () => {
+      return groupEquipmentByLocation(data.individualEquipment);
+    },
+    [data.individualEquipment]
+  );
   
-  const contextValue: InventoryContextType = {
+  const contextValue: InventoryContextType = useMemo(() => ({
     data,
     isLoading: queriesLoading || isLoading || mutations.isLoading,
     syncStatus: 'synced' as const,
@@ -99,7 +111,17 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     updateStorageLocations: mutations.updateStorageLocationWithDefault,
     syncData: async () => data,
     resetToDefaultInventory: () => {},
-  };
+  }), [
+    data,
+    queriesLoading,
+    isLoading,
+    mutations,
+    refetch,
+    inventoryUtils,
+    getEquipmentAtLocation,
+    getEquipmentGroupedByLocation,
+    getEquipmentDisplayLocation
+  ]);
 
   return (
     <InventoryContext.Provider value={contextValue}>
