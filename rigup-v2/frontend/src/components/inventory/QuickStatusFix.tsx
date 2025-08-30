@@ -12,6 +12,7 @@ const QuickStatusFix: React.FC<QuickStatusFixProps> = ({ onFixed }) => {
   const { fixEquipmentStatuses, checkEquipmentStatuses, isFixing } = useEquipmentStatusFix();
   const [needsFix, setNeedsFix] = React.useState(false);
   const [isChecking, setIsChecking] = React.useState(false);
+  const [hasChecked, setHasChecked] = React.useState(false);
 
   const checkStatus = useCallback(async () => {
     setIsChecking(true);
@@ -25,12 +26,16 @@ const QuickStatusFix: React.FC<QuickStatusFixProps> = ({ onFixed }) => {
       console.error('Failed to check equipment status:', error);
     } finally {
       setIsChecking(false);
+      setHasChecked(true);
     }
   }, [checkEquipmentStatuses]);
 
   React.useEffect(() => {
-    checkStatus();
-  }, [checkStatus]);
+    // Only check status once on mount - prevent infinite loop
+    if (!hasChecked) {
+      checkStatus();
+    }
+  }, [hasChecked, checkStatus]); // Proper dependencies but with guard
 
   const handleFix = async () => {
     try {
