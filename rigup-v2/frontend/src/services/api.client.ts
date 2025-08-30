@@ -7,12 +7,24 @@ import { API_CONFIG, getAuthHeaders } from './api.config';
 import { rateLimiter } from './rateLimiter';
 
 class ApiClient {
+  // Track in-flight requests to prevent duplicates
+  private inFlightRequests = new Map<string, Promise<any>>();
+  
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    // Use rate limiter to prevent flooding the API
-    return rateLimiter.throttle(endpoint, async () => {
+    // Create a cache key for this request
+    const cacheKey = `${options.method || 'GET'}-${endpoint}-${options.body || ''}`;
+    
+    // If this exact request is already in flight, return the existing promise
+    if (this.inFlightRequests.has(cacheKey)) {
+      console.log(`[ApiClient] Deduplicating request: ${endpoint}`);
+      return this.inFlightRequests.get(cacheKey)!;
+    }
+    
+    // Create the request promise
+    const requestPromise = rateLimiter.throttle(endpoint, async () => {
       const url = `${API_CONFIG.BASE_URL}${endpoint}`;
       
       try {
@@ -39,8 +51,16 @@ class ApiClient {
       } catch (error) {
         console.error(`API Request failed: ${endpoint}`, error);
         throw error;
+      } finally {
+        // Remove from in-flight requests after completion
+        this.inFlightRequests.delete(cacheKey);
       }
     });
+    
+    // Store the in-flight request
+    this.inFlightRequests.set(cacheKey, requestPromise);
+    
+    return requestPromise;
   }
   
   // Jobs
