@@ -7,7 +7,6 @@ import { LogOut, Home, Cable, Package, Users, Menu, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BlobSyncStatus } from './BlobSyncStatus';
-import { SyncStatusIndicator } from './sync/SyncStatusIndicator';
 import { cn } from '@/lib/utils';
 
 const AppHeader = () => {
@@ -151,7 +150,6 @@ const AppHeader = () => {
         
         {/* Right side - Desktop only user info */}
         <div className="flex items-center space-x-2 sm:space-x-4">
-          <SyncStatusIndicator />
           <BlobSyncStatus className="hidden sm:block" />
           
           {/* Desktop User Info */}
