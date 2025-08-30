@@ -131,10 +131,15 @@ function App() {
     // Double-check blocker is installed
     installAppRequestBlocker();
     
-    // Build version indicator
+    // Build version indicator with timestamp to force cache refresh
+    const buildTime = '2025-01-30T' + new Date().toISOString().split('T')[1];
     console.log('🚀 RigUp Build Version: 2025-01-30-ALL-HOOKS-DISABLED-V5');
+    console.log('🕐 Build deployed at:', buildTime);
     console.log('✅ This build includes: ALL auto-loading hooks disabled');
     console.log('📌 Disabled: useJobs, useEquipmentQueries, useEquipmentSearchManager, useJobPhotoQueries, useTursoContacts, useTursoJobs');
+    
+    // Force version check
+    (window as any).__BUILD_VERSION = 'V5-CACHE-BUST-' + Date.now();
     
     // Hide version after 30 seconds (longer to ensure you see it)
     setTimeout(() => setShowVersion(false), 30000);
@@ -200,7 +205,7 @@ function App() {
           fontSize: '20px',
           fontWeight: 'bold'
         }}>
-          VERSION: 2025-01-30-V5 | ALL AUTO-LOADING DISABLED | {new Date().toISOString()}
+          V5-FORCE-REBUILD | AUTO-LOAD OFF | ENV: {import.meta.env.MODE} | {new Date().toISOString()}
         </div>
       )}
       <QueryClientProvider client={getQueryClient()}>
