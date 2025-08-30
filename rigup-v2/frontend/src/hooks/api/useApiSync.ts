@@ -13,6 +13,7 @@ export function useApiSync() {
   // Get sync status
   const { data: syncStatus, refetch: refetchStatus } = useQuery({
     queryKey: ['sync-status'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: () => equipmentCache.get('api-sync-status', () => apiClient.getSyncStatus()),
     staleTime: 10000, // 10 seconds
     refetchInterval: false, // Disable automatic refetch to prevent API floods

@@ -14,6 +14,7 @@ export function useApiContacts() {
   // Get all contacts - Use cached version to prevent duplicates
   const { data: contacts = [], isLoading, error } = useQuery({
     queryKey: ['contacts'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: () => equipmentCache.get('api-contacts-list', () => apiClient.getContacts()),
     staleTime: 5 * 60 * 1000, // 5 minutes - match cache TTL
     gcTime: 10 * 60 * 1000, // 10 minutes

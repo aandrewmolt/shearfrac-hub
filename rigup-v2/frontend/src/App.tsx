@@ -132,11 +132,11 @@ function App() {
     installAppRequestBlocker();
     
     // Build version indicator
-    console.log('🚀 RigUp Build Version: 2025-01-30-BLOCKER-APP-V2');
-    console.log('✅ This build includes: Request blocker in App.tsx');
+    console.log('🚀 RigUp Build Version: 2025-01-30-QUERIES-DISABLED-V3');
+    console.log('✅ This build includes: ALL queries disabled with enabled:false');
     
-    // Hide version after 10 seconds
-    setTimeout(() => setShowVersion(false), 10000);
+    // Hide version after 30 seconds (longer to ensure you see it)
+    setTimeout(() => setShowVersion(false), 30000);
     
     // Skip Turso validation - using AWS API now
     // logEnvironmentStatus();
@@ -199,7 +199,7 @@ function App() {
           fontSize: '20px',
           fontWeight: 'bold'
         }}>
-          VERSION: 2025-01-30-FIX-V2 | BLOCKER ACTIVE | {new Date().toISOString()}
+          VERSION: 2025-01-30-DISABLED-V3 | ALL QUERIES DISABLED | {new Date().toISOString()}
         </div>
       )}
       <QueryClientProvider client={getQueryClient()}>

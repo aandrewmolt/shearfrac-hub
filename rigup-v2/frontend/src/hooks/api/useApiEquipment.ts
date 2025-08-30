@@ -14,6 +14,7 @@ export function useApiEquipment() {
   // Get all equipment - Use cached version to prevent duplicates
   const { data: equipment = [], isLoading, error } = useQuery({
     queryKey: ['equipment'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: () => equipmentCache.get('api-equipment-list', () => apiClient.getEquipment()),
     staleTime: 5 * 60 * 1000, // 5 minutes - match cache TTL
     gcTime: 10 * 60 * 1000, // 10 minutes

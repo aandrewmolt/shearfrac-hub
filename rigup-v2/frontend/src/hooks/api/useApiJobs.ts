@@ -14,6 +14,7 @@ export function useApiJobs() {
   // Get all jobs - Use cached version to prevent duplicates
   const { data: jobs = [], isLoading, error } = useQuery({
     queryKey: ['jobs'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: () => equipmentCache.get('api-jobs-list', () => apiClient.getJobs()),
     staleTime: 5 * 60 * 1000, // 5 minutes - match cache TTL
     gcTime: 10 * 60 * 1000, // 10 minutes
