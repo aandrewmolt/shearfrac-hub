@@ -4,35 +4,43 @@
  */
 
 import { API_CONFIG, getAuthHeaders } from './api.config';
+import { rateLimiter } from './rateLimiter';
 
 class ApiClient {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    const url = `${API_CONFIG.BASE_URL}${endpoint}`;
-    
-    try {
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          ...getAuthHeaders(),
-          ...options.headers,
-        },
-      });
+    // Use rate limiter to prevent flooding the API
+    return rateLimiter.throttle(endpoint, async () => {
+      const url = `${API_CONFIG.BASE_URL}${endpoint}`;
       
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({
-          message: response.statusText,
-        }));
-        throw new Error(error.message || `Request failed: ${response.status}`);
+      try {
+        const response = await fetch(url, {
+          ...options,
+          headers: {
+            ...getAuthHeaders(),
+            ...options.headers,
+          },
+        });
+        
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({
+            message: response.statusText,
+            status: response.status,
+          }));
+          const apiError = new Error(error.message || `Request failed: ${response.status}`);
+          (apiError as any).status = response.status;
+          (apiError as any).statusCode = response.status;
+          throw apiError;
+        }
+        
+        return response.json();
+      } catch (error) {
+        console.error(`API Request failed: ${endpoint}`, error);
+        throw error;
       }
-      
-      return response.json();
-    } catch (error) {
-      console.error(`API Request failed: ${endpoint}`, error);
-      throw error;
-    }
+    });
   }
   
   // Jobs
