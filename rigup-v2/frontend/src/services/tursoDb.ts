@@ -5,13 +5,18 @@
  */
 
 import { apiClient } from './api.client';
+import { equipmentCache } from './equipmentCache';
 import type { EquipmentType, IndividualEquipment, StorageLocation } from '@/types/inventory';
 import type { Node, Edge } from '@xyflow/react';
 
 class TursoDatabase {
+  // Cache for equipment data to prevent request storms
+  private equipmentCache: any = null;
+  private equipmentCacheTime: number = 0;
+  private readonly CACHE_TTL = 30000; // 30 seconds
   // ==== EQUIPMENT TYPES ====
   async getEquipmentTypes() {
-    const equipment = await apiClient.getEquipment();
+    const equipment = await this.getCachedEquipment();
     // Extract unique types from equipment list
     const typesMap = new Map();
     equipment.forEach((item: any) => {
@@ -26,6 +31,15 @@ class TursoDatabase {
       }
     });
     return Array.from(typesMap.values());
+  }
+  
+  // Helper method to get cached equipment data
+  private async getCachedEquipment() {
+    // Use the singleton equipment cache to prevent duplicate requests
+    return equipmentCache.get('turso-equipment-list', async () => {
+      console.log('[TursoDb] Fetching equipment from API...');
+      return await apiClient.getEquipment();
+    });
   }
 
   async createEquipmentType(type: Partial<EquipmentType> & { name: string; category: string }) {
@@ -50,30 +64,42 @@ class TursoDatabase {
 
   // ==== INDIVIDUAL EQUIPMENT ====
   async getIndividualEquipment() {
-    return apiClient.getEquipment();
+    // Use cached equipment to prevent request storms
+    return this.getCachedEquipment();
   }
 
   async createIndividualEquipment(equipment: any) {
-    return apiClient.createEquipment(equipment);
+    const result = await apiClient.createEquipment(equipment);
+    // Invalidate cache after create
+    equipmentCache.invalidate('turso-equipment-list');
+    return result;
   }
 
   async updateIndividualEquipment(id: string, updates: any) {
-    return apiClient.updateEquipment(id, updates);
+    const result = await apiClient.updateEquipment(id, updates);
+    // Invalidate cache after update
+    equipmentCache.invalidate('turso-equipment-list');
+    return result;
   }
 
   async deleteIndividualEquipment(id: string) {
-    return apiClient.deleteEquipment(id);
+    const result = await apiClient.deleteEquipment(id);
+    // Invalidate cache after delete
+    equipmentCache.invalidate('turso-equipment-list');
+    return result;
   }
 
   async getIndividualEquipmentById(id: string) {
-    return apiClient.getEquipment(id);
+    // Get from cached list to avoid individual API calls
+    const equipment = await this.getCachedEquipment();
+    return equipment.find((item: any) => item.id === id || item.equipmentId === id);
   }
 
   // ==== EQUIPMENT HISTORY ====
   async addEquipmentHistory(entry: any) {
     // Store history in equipment metadata
-    const equipment = await apiClient.getEquipment(entry.equipmentId);
-    const history = equipment.history || [];
+    const equipment = await this.getIndividualEquipmentById(entry.equipmentId);
+    const history = equipment?.history || [];
     history.push({
       ...entry,
       timestamp: new Date().toISOString()
@@ -82,13 +108,14 @@ class TursoDatabase {
   }
 
   async getEquipmentHistory(equipmentId: string) {
-    const equipment = await apiClient.getEquipment(equipmentId);
-    return equipment.history || [];
+    const equipment = await this.getIndividualEquipmentById(equipmentId);
+    return equipment?.history || [];
   }
 
   // ==== EQUIPMENT (legacy compatibility) ====
   async getEquipment() {
-    return apiClient.getEquipment();
+    // Use cached equipment to prevent request storms
+    return this.getCachedEquipment();
   }
 
   async createEquipment(equipment: any) {
@@ -136,7 +163,7 @@ class TursoDatabase {
 
   // ==== EQUIPMENT ITEMS (Bulk Equipment) ====
   async getEquipmentItems() {
-    const equipment = await apiClient.getEquipment();
+    const equipment = await this.getCachedEquipment();
     return equipment.filter((e: any) => e.is_bulk);
   }
 
@@ -248,7 +275,7 @@ class TursoDatabase {
 
   // ==== BULK DEPLOYMENTS ====
   async getBulkDeployments() {
-    const equipment = await apiClient.getEquipment();
+    const equipment = await this.getCachedEquipment();
     return equipment.filter((e: any) => e.is_bulk && e.job_id);
   }
 
@@ -265,8 +292,8 @@ class TursoDatabase {
   }
 
   async returnBulkDeployment(deploymentId: string, quantity: number) {
-    const equipment = await apiClient.getEquipment(deploymentId);
-    if (equipment.job_id) {
+    const equipment = await this.getIndividualEquipmentById(deploymentId);
+    if (equipment?.job_id) {
       return apiClient.returnEquipment({
         equipmentId: deploymentId,
         jobId: equipment.job_id,
