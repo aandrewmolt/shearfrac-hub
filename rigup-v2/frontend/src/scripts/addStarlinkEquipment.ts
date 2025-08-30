@@ -8,8 +8,15 @@ export async function addStarlinkEquipment() {
     
     // First, check if Starlink equipment type exists
     const equipmentTypes = await equipmentCache.get('script-equipment-types', () => apiClient.getEquipment());
+    
+    // Handle case where equipmentTypes might be undefined or not an array
+    if (!equipmentTypes || !Array.isArray(equipmentTypes)) {
+      console.log('No equipment types found or invalid response');
+      return;
+    }
+    
     let starlinkType = equipmentTypes.find((type: any) => 
-      type.name === 'Starlink' || type.name === 'starlink'
+      type && (type.name === 'Starlink' || type.name === 'starlink')
     );
     
     // Create equipment type if it doesn't exist
@@ -33,8 +40,15 @@ export async function addStarlinkEquipment() {
     
     // Get or create a storage location
     const storageLocations = await equipmentCache.get('script-storage-locations', () => apiClient.request('/api/storage-locations'));
+    
+    // Handle case where storageLocations might be undefined or not an array
+    if (!storageLocations || !Array.isArray(storageLocations)) {
+      console.log('No storage locations found or invalid response');
+      return;
+    }
+    
     let mainStorage = storageLocations.find((loc: any) => 
-      loc.name === 'Main Storage' || loc.name === 'Warehouse'
+      loc && (loc.name === 'Main Storage' || loc.name === 'Warehouse')
     );
     
     if (!mainStorage) {

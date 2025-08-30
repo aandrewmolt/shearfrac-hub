@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API CORS Test</title>
+</head>
+<body>
+    <h1>Testing API CORS</h1>
+    <button onclick="testAPI()">Test Equipment API</button>
+    <button onclick="testJobs()">Test Jobs API</button>
+    <button onclick="testOptions()">Test OPTIONS</button>
+    
+    <h2>Results:</h2>
+    <pre id="results"></pre>
+
+    <script>
+        const API_URL = 'https://wmh8r4eixg.execute-api.us-east-1.amazonaws.com/dev';
+        const resultsEl = document.getElementById('results');
+        
+        function log(message) {
+            resultsEl.textContent += message + '\n';
+            console.log(message);
+        }
+        
+        async function testAPI() {
+            log('\n=== Testing Equipment Endpoint ===');
+            try {
+                const response = await fetch(`${API_URL}/equipment`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                log(`Status: ${response.status}`);
+                log(`Headers: ${JSON.stringify([...response.headers.entries()])}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`Success! Got ${data.length || 0} equipment items`);
+                } else {
+                    log(`Error: ${response.statusText}`);
+                }
+            } catch (error) {
+                log(`CORS Error: ${error.message}`);
+                log('This means CORS is not configured on the API Gateway');
+            }
+        }
+        
+        async function testJobs() {
+            log('\n=== Testing Jobs Endpoint ===');
+            try {
+                const response = await fetch(`${API_URL}/jobs`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                log(`Status: ${response.status}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`Success! Got ${data.length || 0} jobs`);
+                } else {
+                    log(`Error: ${response.statusText}`);
+                }
+            } catch (error) {
+                log(`CORS Error: ${error.message}`);
+            }
+        }
+        
+        async function testOptions() {
+            log('\n=== Testing OPTIONS (Preflight) ===');
+            try {
+                const response = await fetch(`${API_URL}/equipment`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+                
+                log(`Status: ${response.status}`);
+                log(`CORS Headers:`);
+                log(`  Allow-Origin: ${response.headers.get('Access-Control-Allow-Origin')}`);
+                log(`  Allow-Methods: ${response.headers.get('Access-Control-Allow-Methods')}`);
+                log(`  Allow-Headers: ${response.headers.get('Access-Control-Allow-Headers')}`);
+            } catch (error) {
+                log(`OPTIONS Error: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
