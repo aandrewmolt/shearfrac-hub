@@ -1,11 +1,11 @@
 {
   "name": "vite_react_shadcn_ts",
   "private": true,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "rm -rf dist && vite build",
     "build:dev": "vite build --mode development",
     "build:local": "VITE_DATABASE_MODE=local vite build",
     "lint": "eslint .",
