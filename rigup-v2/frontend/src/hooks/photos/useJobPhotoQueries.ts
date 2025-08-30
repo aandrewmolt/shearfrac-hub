@@ -6,6 +6,7 @@ import { JobPhoto } from './types';
 export const useJobPhotoQueries = (jobId: string) => {
   const { data: photos = [], isLoading } = useQuery({
     queryKey: ['job-photos', jobId],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: async () => {
       const data = await tursoDb.getJobPhotos(jobId);
       

@@ -12,9 +12,10 @@ export function useTursoJobs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    loadJobs();
-  }, []);
+  // DISABLED - Manual load only to prevent request storm
+  // useEffect(() => {
+  //   loadJobs();
+  // }, []);
 
   const loadJobs = async () => {
     try {

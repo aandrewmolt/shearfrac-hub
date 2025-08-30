@@ -67,9 +67,10 @@ export function useTursoContacts() {
   const [isSyncing, setIsSyncing] = useState(false);
 
   // Load data on mount
-  useEffect(() => {
-    loadData();
-  }, []);
+  // DISABLED - Manual load only to prevent request storm
+  // useEffect(() => {
+  //   loadData();
+  // }, []);
 
   const loadData = async () => {
     try {

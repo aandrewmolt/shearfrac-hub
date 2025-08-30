@@ -68,6 +68,7 @@ export const useEquipmentSearchManager = () => {
     refetch: refetchTypes 
   } = useQuery({
     queryKey: ['equipment-types'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: async () => {
       try {
         await ensureSchemaInitialized();
@@ -94,6 +95,7 @@ export const useEquipmentSearchManager = () => {
     refetch: refetchLocations 
   } = useQuery({
     queryKey: ['storage-locations'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: async () => {
       try {
         const locations = await tursoDb.getStorageLocations();
@@ -112,6 +114,7 @@ export const useEquipmentSearchManager = () => {
     refetch: refetchEquipment 
   } = useQuery({
     queryKey: ['individual-equipment'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: async () => {
       try {
         const equipment = await tursoDb.getIndividualEquipment();
