@@ -13,24 +13,19 @@ class TursoDatabase {
   // Removed local cache - now using singleton equipmentCache service
   // ==== EQUIPMENT TYPES ====
   async getEquipmentTypes() {
-    // Cache equipment types separately to avoid unnecessary processing
+    // FIXED: Return static types instead of fetching all equipment
+    // This prevents the inefficient pattern of downloading entire inventory
     return equipmentCache.get('turso-equipment-types', async () => {
-      console.log('[TursoDb] Computing equipment types from cached equipment...');
-      const equipment = await this.getCachedEquipment();
-      // Extract unique types from equipment list
-      const typesMap = new Map();
-      equipment.forEach((item: any) => {
-        if (item.type && !typesMap.has(item.type)) {
-          typesMap.set(item.type, {
-            id: item.type,
-            name: item.type,
-            category: item.category || 'general',
-            code: item.type_code || item.type.substring(0, 3).toUpperCase(),
-            is_bulk: item.is_bulk || false
-          });
-        }
-      });
-      return Array.from(typesMap.values());
+      console.log('[TursoDb] Returning static equipment types (no API call)');
+      return [
+        { id: 'shearstream', name: 'Shearstream Box', category: 'main', code: 'SS', is_bulk: false },
+        { id: 'cable-tester', name: 'Cable Tester', category: 'testing', code: 'CT', is_bulk: false },
+        { id: 'satellite', name: 'Satellite', category: 'communication', code: 'SAT', is_bulk: false },
+        { id: 'gauge', name: 'Gauge', category: 'monitoring', code: 'G', is_bulk: false },
+        { id: 'server', name: 'Server', category: 'computing', code: 'SRV', is_bulk: false },
+        { id: 'junction-box', name: 'Junction Box', category: 'connectivity', code: 'JB', is_bulk: false },
+        { id: 'starlink', name: 'Starlink', category: 'communication', code: 'SL', is_bulk: false }
+      ];
     });
   }
   

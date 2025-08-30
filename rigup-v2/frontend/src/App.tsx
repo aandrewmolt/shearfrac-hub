@@ -133,10 +133,13 @@ function App() {
     
     // Build version indicator with timestamp to force cache refresh
     const buildTime = '2025-01-30T' + new Date().toISOString().split('T')[1];
-    console.log('🚀 RigUp Build Version: 2025-01-30-ALL-HOOKS-DISABLED-V5');
+    console.log('🚀 RigUp Build Version: 2025-01-30-ARCHITECTURE-FIX-V6');
     console.log('🕐 Build deployed at:', buildTime);
-    console.log('✅ This build includes: ALL auto-loading hooks disabled');
-    console.log('📌 Disabled: useJobs, useEquipmentQueries, useEquipmentSearchManager, useJobPhotoQueries, useTursoContacts, useTursoJobs');
+    console.log('✅ CRITICAL FIXES APPLIED:');
+    console.log('  1. getEquipmentTypes no longer fetches entire inventory');
+    console.log('  2. Core hook effect infinite loop fixed');
+    console.log('  3. Batch fetching implemented to prevent N+1');
+    console.log('  4. All auto-loading queries disabled');
     
     // Force version check
     (window as any).__BUILD_VERSION = 'V5-CACHE-BUST-' + Date.now();
@@ -205,7 +208,7 @@ function App() {
           fontSize: '20px',
           fontWeight: 'bold'
         }}>
-          V5-FORCE-REBUILD | AUTO-LOAD OFF | ENV: {import.meta.env.MODE} | {new Date().toISOString()}
+          V6-ARCH-FIX | REQUEST STORM FIXED | ENV: {import.meta.env.MODE} | {new Date().toISOString()}
         </div>
       )}
       <QueryClientProvider client={getQueryClient()}>

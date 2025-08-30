@@ -82,20 +82,21 @@ export const useJobDiagramCore = (job: JobDiagram, inventoryData?: IndividualEqu
     initializeCableType();
   }, [initializeCableType]);
 
-  // Initialize job when job changes or when not initialized
+  // Track if we've initialized this specific job
+  const initializedJobId = React.useRef<string | null>(null);
+  
+  // Initialize job ONLY ONCE per job ID
   React.useEffect(() => {
-    console.log('Core hook effect - job or initialization change:', { 
-      jobId: job.id, 
-      isInitialized,
-      wellCount: job.wellCount,
-      hasWellsideGauge: job.hasWellsideGauge
-    });
-    
-    if (job && !isInitialized) {
-      console.log('Triggering job initialization');
+    // Only initialize if:
+    // 1. We have a job with an ID
+    // 2. We haven't initialized this specific job yet
+    // 3. The system says it's not initialized
+    if (job && job.id && initializedJobId.current !== job.id && !isInitialized) {
+      console.log('Core hook effect - ONE TIME initialization for job:', job.id);
+      initializedJobId.current = job.id;
       initializeJob();
     }
-  }, [job, isInitialized, initializeJob]);
+  }, [job.id, isInitialized, initializeJob]);
 
   // Diagram connections
   const { onConnect } = useDiagramConnections(selectedCableType, nodes, setEdges);
