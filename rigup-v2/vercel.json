@@ -1,0 +1,57 @@
+{
+  "buildCommand": "cd frontend && rm -rf dist && npm run build && echo 'BUILD VERSION: V6-FRONTEND-FIX' && date",
+  "outputDirectory": "frontend/dist", 
+  "framework": null,
+  "installCommand": "cd frontend && npm install",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0, s-maxage=0"
+        },
+        {
+          "key": "Pragma", 
+          "value": "no-cache"
+        },
+        {
+          "key": "Expires",
+          "value": "0"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Build-Version",
+          "value": "V6-FRONTEND-2025-08-30"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/index.html", 
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

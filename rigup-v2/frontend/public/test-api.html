@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test from Vercel</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { margin: 10px; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; max-height: 400px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🔗 API Test from Vercel Deployment</h1>
+    <p>Testing AWS Lambda API from Vercel-deployed frontend</p>
+    
+    <div>
+        <button onclick="testEquipment()">🔧 Test Equipment API</button>
+        <button onclick="testJobs()">📋 Test Jobs API</button>
+        <button onclick="testCORS()">🌐 Test CORS</button>
+        <button onclick="clearResults()">🧹 Clear</button>
+    </div>
+    
+    <h2>Results:</h2>
+    <pre id="results"></pre>
+
+    <script>
+        // Use environment variable if available, fallback to hardcoded
+        const API_URL = window.VITE_API_URL || 'https://wmh8r4eixg.execute-api.us-east-1.amazonaws.com/dev';
+        const API_KEY = window.VITE_API_KEY || 'C5b4WeRnJ82JRJo5ePOF36vfbB6AaBBS8MeLyx6A';
+        const resultsEl = document.getElementById('results');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colorClass = type === 'success' ? 'success' : type === 'error' ? 'error' : '';
+            const prefix = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            resultsEl.innerHTML += `<span class="${colorClass}">[${timestamp}] ${prefix} ${message}</span>\n`;
+            console.log(`[${timestamp}] ${message}`);
+            resultsEl.scrollTop = resultsEl.scrollHeight;
+        }
+        
+        function clearResults() {
+            resultsEl.innerHTML = '';
+        }
+        
+        async function testEquipment() {
+            log('Testing Equipment Endpoint...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/equipment`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    }
+                });
+                
+                log(`Status: ${response.status} ${response.statusText}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`SUCCESS! Retrieved ${data.length} equipment items`, 'success');
+                    log(`Sample equipment: ${data[0]?.displayName || 'None'}`, 'info');
+                } else {
+                    const errorText = await response.text();
+                    log(`ERROR: ${errorText}`, 'error');
+                }
+            } catch (error) {
+                log(`NETWORK ERROR: ${error.message}`, 'error');
+                log('This could indicate CORS issues or network problems', 'error');
+            }
+        }
+        
+        async function testJobs() {
+            log('Testing Jobs Endpoint...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/jobs`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    }
+                });
+                
+                log(`Status: ${response.status} ${response.statusText}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`SUCCESS! Retrieved ${data.length} jobs`, 'success');
+                    if (data.length > 0) {
+                        log(`Sample job: ${data[0].name} (Client: ${data[0].client})`, 'info');
+                    }
+                } else {
+                    const errorText = await response.text();
+                    log(`ERROR: ${errorText}`, 'error');
+                }
+            } catch (error) {
+                log(`NETWORK ERROR: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testCORS() {
+            log('Testing CORS Preflight (OPTIONS)...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/equipment`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'Content-Type,x-api-key'
+                    }
+                });
+                
+                log(`Preflight Status: ${response.status}`);
+                
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers'),
+                    'Access-Control-Allow-Credentials': response.headers.get('Access-Control-Allow-Credentials')
+                };
+                
+                log('CORS Headers:', 'info');
+                Object.entries(corsHeaders).forEach(([key, value]) => {
+                    if (value) {
+                        log(`  ${key}: ${value}`, value.includes('*') || value.includes('true') ? 'success' : 'info');
+                    }
+                });
+                
+                if (corsHeaders['Access-Control-Allow-Origin']) {
+                    log('CORS is properly configured! ✨', 'success');
+                } else {
+                    log('CORS may not be configured correctly', 'error');
+                }
+                
+            } catch (error) {
+                log(`CORS ERROR: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-run basic test on load
+        window.onload = function() {
+            log(`🚀 API Tester Ready!`);
+            log(`API URL: ${API_URL}`);
+            log(`Page loaded from: ${window.location.origin}`);
+            log('Click buttons above to test API endpoints');
+        };
+    </script>
+</body>
+</html>
