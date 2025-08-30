@@ -203,23 +203,6 @@ function App() {
 
   return (
     <ErrorBoundary>
-      {showVersion && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          background: 'red',
-          color: 'white',
-          padding: '10px',
-          textAlign: 'center',
-          zIndex: 9999999,
-          fontSize: '20px',
-          fontWeight: 'bold'
-        }}>
-          V6-ARCH-FIX | REQUEST STORM FIXED | ENV: {import.meta.env.MODE} | {new Date().toISOString()}
-        </div>
-      )}
       <QueryClientProvider client={getQueryClient()}>
         <AuthProvider>
           <SafeWrapper>

@@ -1,22 +1,27 @@
 // Service Worker for RigUp Offline Support
-const CACHE_NAME = 'rigup-offline-v1';
+const CACHE_NAME = 'rigup-offline-v2';
 const STATIC_ASSETS = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
-  '/manifest.json'
+  '/index.html'
 ];
 
-// Install event - cache static assets
+// Install event - cache only essential assets
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Caching static assets');
-        return cache.addAll(STATIC_ASSETS);
+        console.log('Caching essential assets');
+        // Try to cache each asset individually to avoid complete failure
+        return Promise.all(
+          STATIC_ASSETS.map(url => 
+            cache.add(url).catch(err => {
+              console.warn(`Failed to cache ${url}:`, err);
+            })
+          )
+        );
       })
       .catch(error => {
-        console.error('Failed to cache static assets:', error);
+        console.error('Cache initialization failed:', error);
       })
   );
   
