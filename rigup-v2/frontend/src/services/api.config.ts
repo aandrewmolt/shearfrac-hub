@@ -3,9 +3,9 @@
  * Connects to AWS Lambda via API Gateway
  */
 
-// Use environment variable or default to AWS API Gateway endpoint
+// Hardcoded for Vercel deployment - replace with env vars in production
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  'https://your-api-gateway-id.execute-api.us-east-1.amazonaws.com/dev';
+  'https://wmh8r4eixg.execute-api.us-east-1.amazonaws.com/dev';
 
 export const API_CONFIG = {
   BASE_URL: API_BASE_URL,
@@ -52,8 +52,12 @@ export const API_CONFIG = {
 
 export const getAuthHeaders = (): HeadersInit => {
   const token = localStorage.getItem('api_token');
+  // Hardcoded API key for Vercel deployment
+  const apiKey = import.meta.env.VITE_API_KEY || 'C5b4WeRnJ82JRJo5ePOF36vfbB6AaBBS8MeLyx6A';
+  
   return {
     'Content-Type': 'application/json',
+    'x-api-key': apiKey,
     ...(token && { 'Authorization': `Bearer ${token}` }),
   };
 };
