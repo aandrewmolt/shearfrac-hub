@@ -35,14 +35,16 @@ function getQueryClient() {
     queryClient = new QueryClient({
       defaultOptions: {
         queries: {
-          // Prevent aggressive refetching and infinite loops
-          staleTime: 1000 * 30, // 30 seconds
-          cacheTime: 1000 * 60 * 5, // 5 minutes
+          // AGGRESSIVE: Prevent ALL automatic refetching
+          staleTime: 1000 * 60 * 5, // 5 minutes - match cache TTL
+          gcTime: 1000 * 60 * 10, // 10 minutes
           refetchOnWindowFocus: false,
           refetchOnReconnect: false,
           refetchOnMount: false,
-          retry: 1,
-          retryDelay: 1000,
+          refetchInterval: false, // Never auto-refetch
+          retry: false, // Don't retry failed requests
+          retryDelay: 0,
+          networkMode: 'offlineFirst', // Use cache first
         },
       },
     });

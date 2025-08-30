@@ -3,6 +3,10 @@ import App from './App.tsx'
 import './index.css'
 import './styles/responsive.css'
 
+// CRITICAL: Install global request interceptor before ANYTHING else
+// This will block all duplicate API requests at the fetch level
+import './services/globalRequestInterceptor'
+
 // Build version indicator - moved to App component to avoid module-level execution
 
 // Ensure dark mode is always active for corporate theme
