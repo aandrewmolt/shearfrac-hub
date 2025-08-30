@@ -5,16 +5,20 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../services/api.client';
+import { equipmentCache } from '../../services/equipmentCache';
 import { toast } from '../use-toast';
 
 export function useApiEquipment() {
   const queryClient = useQueryClient();
   
-  // Get all equipment
+  // Get all equipment - Use cached version to prevent duplicates
   const { data: equipment = [], isLoading, error } = useQuery({
     queryKey: ['equipment'],
-    queryFn: () => apiClient.getEquipment(),
-    staleTime: 30000, // 30 seconds
+    queryFn: () => equipmentCache.get('api-equipment-list', () => apiClient.getEquipment()),
+    staleTime: 5 * 60 * 1000, // 5 minutes - match cache TTL
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false, // Don't refetch if data exists
+    refetchOnWindowFocus: false, // Don't refetch on window focus
   });
   
   // Update equipment status mutation
@@ -25,7 +29,10 @@ export function useApiEquipment() {
       jobId?: string;
     }) => apiClient.updateEquipmentStatus(equipmentId, status, jobId),
     onSuccess: () => {
+      // Invalidate both React Query and singleton cache
       queryClient.invalidateQueries({ queryKey: ['equipment'] });
+      equipmentCache.invalidate('api-equipment-list');
+      equipmentCache.invalidate('turso-equipment-list');
       toast({
         title: 'Success',
         description: 'Equipment status updated',
@@ -44,7 +51,10 @@ export function useApiEquipment() {
   const bulkDeploy = useMutation({
     mutationFn: (deployment: any) => apiClient.bulkDeployEquipment(deployment),
     onSuccess: () => {
+      // Invalidate both React Query and singleton cache
       queryClient.invalidateQueries({ queryKey: ['equipment'] });
+      equipmentCache.invalidate('api-equipment-list');
+      equipmentCache.invalidate('turso-equipment-list');
       toast({
         title: 'Success',
         description: 'Equipment deployed successfully',
@@ -63,7 +73,10 @@ export function useApiEquipment() {
   const bulkReturn = useMutation({
     mutationFn: (deploymentId: number) => apiClient.bulkReturnEquipment(deploymentId),
     onSuccess: () => {
+      // Invalidate both React Query and singleton cache
       queryClient.invalidateQueries({ queryKey: ['equipment'] });
+      equipmentCache.invalidate('api-equipment-list');
+      equipmentCache.invalidate('turso-equipment-list');
       toast({
         title: 'Success',
         description: 'Equipment returned successfully',

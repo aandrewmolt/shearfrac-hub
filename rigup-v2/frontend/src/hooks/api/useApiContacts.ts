@@ -5,23 +5,30 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../services/api.client';
+import { equipmentCache } from '../../services/equipmentCache';
 import { toast } from '../use-toast';
 
 export function useApiContacts() {
   const queryClient = useQueryClient();
   
-  // Get all contacts
+  // Get all contacts - Use cached version to prevent duplicates
   const { data: contacts = [], isLoading, error } = useQuery({
     queryKey: ['contacts'],
-    queryFn: () => apiClient.getContacts(),
-    staleTime: 60000, // 1 minute
+    queryFn: () => equipmentCache.get('api-contacts-list', () => apiClient.getContacts()),
+    staleTime: 5 * 60 * 1000, // 5 minutes - match cache TTL
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false, // Don't refetch if data exists
+    refetchOnWindowFocus: false, // Don't refetch on window focus
   });
   
   // Create contact mutation
   const createContact = useMutation({
     mutationFn: (contact: any) => apiClient.createContact(contact),
     onSuccess: () => {
+      // Invalidate both React Query and singleton cache
       queryClient.invalidateQueries({ queryKey: ['contacts'] });
+      equipmentCache.invalidate('api-contacts-list');
+      equipmentCache.invalidate('turso-contacts-list');
       toast({
         title: 'Success',
         description: 'Contact created successfully',
