@@ -53,10 +53,9 @@ export function getTursoClient() {
   if (!tursoClient) {
     const dbUrl = import.meta.env.VITE_TURSO_DATABASE_URL;
     
-    // If no URL provided, use mock client for local development
+    // AWS API mode - use mock client (data comes from AWS DynamoDB)
     if (!dbUrl || dbUrl === '' || dbUrl.startsWith('file:')) {
-      console.warn('⚠️ No Turso database URL provided. Using in-memory mock database for development.');
-      console.log('ℹ️ To use a real database, sign up at https://turso.tech and add credentials to .env');
+      // Silent initialization - all data operations go through AWS API
       tursoClient = new MockTursoClient() as unknown as typeof tursoClient;
     } else {
       // Create real Turso client
