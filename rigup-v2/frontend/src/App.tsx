@@ -124,14 +124,19 @@ const installAppRequestBlocker = () => {
 installAppRequestBlocker();
 
 function App() {
+  const [showVersion, setShowVersion] = useState(true);
+  
   // Register service worker for offline support
   useEffect(() => {
     // Double-check blocker is installed
     installAppRequestBlocker();
     
     // Build version indicator
-    console.log('🚀 RigUp Build Version: 2025-01-30-BLOCKER-APP');
+    console.log('🚀 RigUp Build Version: 2025-01-30-BLOCKER-APP-V2');
     console.log('✅ This build includes: Request blocker in App.tsx');
+    
+    // Hide version after 10 seconds
+    setTimeout(() => setShowVersion(false), 10000);
     
     // Skip Turso validation - using AWS API now
     // logEnvironmentStatus();
@@ -180,6 +185,23 @@ function App() {
 
   return (
     <ErrorBoundary>
+      {showVersion && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          background: 'red',
+          color: 'white',
+          padding: '10px',
+          textAlign: 'center',
+          zIndex: 9999999,
+          fontSize: '20px',
+          fontWeight: 'bold'
+        }}>
+          VERSION: 2025-01-30-FIX-V2 | BLOCKER ACTIVE | {new Date().toISOString()}
+        </div>
+      )}
       <QueryClientProvider client={getQueryClient()}>
         <AuthProvider>
           <SafeWrapper>

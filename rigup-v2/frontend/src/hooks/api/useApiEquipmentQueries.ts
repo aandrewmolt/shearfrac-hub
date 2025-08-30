@@ -45,7 +45,9 @@ export const useApiEquipmentQueries = () => {
   // Individual Equipment - fetch from AWS API with singleton caching
   const { data: individualEquipment = [], isLoading: equipmentLoading, refetch: refetchEquipment } = useQuery({
     queryKey: ['api-individual-equipment'],
+    enabled: false, // DISABLED - Manual load only to prevent request storm
     queryFn: async () => {
+      console.warn('⚠️ Equipment query should not be running automatically!');
       // Use the singleton cache to prevent duplicate requests
       return equipmentCache.get('equipment-list', async () => {
         try {
