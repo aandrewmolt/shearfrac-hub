@@ -17,7 +17,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { useJobEquipmentTracking } from '@/hooks/equipment/useJobEquipmentTracking';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { JobDeletionDialog } from '@/components/jobs/JobDeletionDialog';
 
 const CableJobs = () => {

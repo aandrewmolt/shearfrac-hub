@@ -11,7 +11,7 @@ import { FixPressureGaugeButton } from '@/components/inventory/FixPressureGaugeB
 import { RunMigration } from '@/components/RunMigration';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Settings, Building, ArrowRightLeft, AlertTriangle, Package, AlertCircle } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import EquipmentConflictDashboard from '@/components/inventory/EquipmentConflictDashboard';
 
 const InventorySettings = () => {

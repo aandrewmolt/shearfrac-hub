@@ -83,8 +83,8 @@ const InventoryConsistencyValidator: React.FC = () => {
 
       // Check for orphaned equipment items
       data.equipmentItems.forEach(item => {
-        const typeExists = data.equipmentTypes.find(type => type.id === item.typeId);
-        const locationExists = data.storageLocations.find(loc => loc.id === item.locationId);
+        const typeExists = data?.equipmentTypes?.find(type => type.id === item.typeId);
+        const locationExists = data?.storageLocations?.find(loc => loc.id === item.locationId);
         
         if (!typeExists) {
           issues.push(`Equipment item references non-existent type: ${item.typeId}`);
@@ -95,7 +95,7 @@ const InventoryConsistencyValidator: React.FC = () => {
       });
 
       // Check for missing minimum inventory
-      const defaultLocation = data.storageLocations.find(loc => loc.isDefault);
+      const defaultLocation = data?.storageLocations?.find(loc => loc.isDefault);
       if (defaultLocation) {
         data.equipmentTypes.forEach(type => {
           if (!type.requiresIndividualTracking) {

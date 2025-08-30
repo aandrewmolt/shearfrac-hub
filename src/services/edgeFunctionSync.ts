@@ -21,10 +21,10 @@ export const checkSyncHealth = async (): Promise<{ healthy: boolean; message: st
   const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   
   if (isDevelopment) {
-    // In development, edge functions don't work - show appropriate message
+    // In development, return as not configured to hide the message
     return { 
       healthy: false, 
-      message: 'Edge functions only work in production (Vercel)' 
+      message: 'Sync not configured' 
     };
   }
   

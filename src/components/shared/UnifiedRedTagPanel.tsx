@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from '@/components/ui/textarea';
 import { AlertTriangle, CheckCircle, Camera, MapPin, Plus, X } from 'lucide-react';
 import { useUnifiedInventory } from '@/hooks/useUnifiedInventory';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import EnhancedRedTagManager from '../inventory/EnhancedRedTagManager';
 import { toast } from 'sonner';
 import { isEquipmentAtLocation } from '@/utils/equipmentLocation';
@@ -49,12 +49,12 @@ export const UnifiedRedTagPanel: React.FC<UnifiedRedTagPanelProps> = ({
   const [redTaggedItems, setRedTaggedItems] = useState<RedTaggedItem[]>([]);
 
   const getEquipmentTypeName = (typeId: string) => {
-    const type = data.equipmentTypes.find(t => t.id === typeId);
+    const type = data?.equipmentTypes?.find(t => t.id === typeId);
     return type?.name || 'Unknown Type';
   };
 
   const getLocationName = (locationId: string) => {
-    const location = data.storageLocations.find(l => l.id === locationId);
+    const location = data?.storageLocations?.find(l => l.id === locationId);
     return location?.name || 'Unknown Location';
   };
 
@@ -73,10 +73,10 @@ export const UnifiedRedTagPanel: React.FC<UnifiedRedTagPanelProps> = ({
   );
 
   // Location variant logic
-  const selectedType = data.equipmentTypes.find(type => type.id === selectedEquipmentType);
+  const selectedType = data?.equipmentTypes?.find(type => type.id === selectedEquipmentType);
   const requiresIndividualTracking = selectedType?.requiresIndividualTracking || false;
   
-  const availableIndividualEquipment = data.individualEquipment.filter(
+  const availableIndividualEquipment = data?.individualEquipment?.filter(
     eq => eq.typeId === selectedEquipmentType
   );
 
@@ -384,7 +384,7 @@ export const UnifiedRedTagPanel: React.FC<UnifiedRedTagPanelProps> = ({
                       <SelectValue placeholder="Select equipment type" />
                     </SelectTrigger>
                     <SelectContent className="bg-card">
-                      {data.equipmentTypes.map(type => (
+                      {(data?.equipmentTypes || []).map(type => (
                         <SelectItem key={type.id} value={type.id}>
                           <div className="flex items-center gap-2">
                             {type.name}
@@ -480,7 +480,7 @@ export const UnifiedRedTagPanel: React.FC<UnifiedRedTagPanelProps> = ({
             <div className="space-y-3">
               <h4 className="text-sm font-medium text-destructive">Red Tagged Equipment:</h4>
               {redTaggedItems.map(item => {
-                const equipmentType = data.equipmentTypes.find(type => type.id === item.equipmentTypeId);
+                const equipmentType = data?.equipmentTypes?.find(type => type.id === item.equipmentTypeId);
                 const isIndividuallyTracked = equipmentType?.requiresIndividualTracking;
                 
                 return (

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { tursoDb } from '@/services/tursoDb';
+import awsDatabase from '@/services/awsDatabase';
 import { saveLock } from '@/utils/saveLock';
 import type { Node, Edge } from '@xyflow/react';
 
@@ -40,7 +40,7 @@ export const useJobs = () => {
   const { data: jobs = [], isLoading } = useQuery({
     queryKey: ['jobs'],
     queryFn: async () => {
-      const data = await tursoDb.getJobs();
+      const data = await awsDatabase.getJobs();
       return (data || []).map(job => ({
         id: job.id || job.cloudId,
         name: job.name,
@@ -88,7 +88,7 @@ export const useJobs = () => {
         }
         
         // Check for existing job by ID or name
-        const existingJobs = await tursoDb.getJobs();
+        const existingJobs = await awsDatabase.getJobs();
         const existingJob = existingJobs.find(j => 
           j.id === jobData.id || 
           j.cloudId === jobData.id ||
@@ -97,10 +97,10 @@ export const useJobs = () => {
         
         if (existingJob) {
           console.log('Updating existing job:', existingJob.id, jobData.name);
-          return await tursoDb.updateJob(existingJob.id || existingJob.cloudId, jobData);
+          return await awsDatabase.updateJob(existingJob.id || existingJob.cloudId, jobData);
         } else {
           console.log('Creating new job:', jobData.id, jobData.name);
-          return await tursoDb.createJob(jobData);
+          return await awsDatabase.createJob(jobData);
         }
       }) || null; // Return null if lock couldn't be acquired
     },
@@ -122,7 +122,7 @@ export const useJobs = () => {
 
   const deleteJobMutation = useMutation({
     mutationFn: async (jobId: string) => {
-      await tursoDb.deleteJob(jobId);
+      await awsDatabase.deleteJob(jobId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] });

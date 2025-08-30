@@ -1,0 +1,107 @@
+/**
+ * Equipment API Hook
+ * Handles equipment operations with new backend
+ */
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '../../services/api.client';
+import { toast } from '../use-toast';
+
+export function useApiEquipment() {
+  const queryClient = useQueryClient();
+  
+  // Get all equipment
+  const { data: equipment = [], isLoading, error } = useQuery({
+    queryKey: ['equipment'],
+    queryFn: () => apiClient.getEquipment(),
+    staleTime: 30000, // 30 seconds
+  });
+  
+  // Update equipment status mutation
+  const updateEquipmentStatus = useMutation({
+    mutationFn: ({ equipmentId, status, jobId }: {
+      equipmentId: string;
+      status: string;
+      jobId?: string;
+    }) => apiClient.updateEquipmentStatus(equipmentId, status, jobId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment'] });
+      toast({
+        title: 'Success',
+        description: 'Equipment status updated',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to update equipment status',
+        variant: 'destructive',
+      });
+    },
+  });
+  
+  // Bulk deploy mutation
+  const bulkDeploy = useMutation({
+    mutationFn: (deployment: any) => apiClient.bulkDeployEquipment(deployment),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment'] });
+      toast({
+        title: 'Success',
+        description: 'Equipment deployed successfully',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to deploy equipment',
+        variant: 'destructive',
+      });
+    },
+  });
+  
+  // Bulk return mutation
+  const bulkReturn = useMutation({
+    mutationFn: (deploymentId: number) => apiClient.bulkReturnEquipment(deploymentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment'] });
+      toast({
+        title: 'Success',
+        description: 'Equipment returned successfully',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to return equipment',
+        variant: 'destructive',
+      });
+    },
+  });
+  
+  // Get equipment history
+  const getEquipmentHistory = async (equipmentId: string) => {
+    try {
+      return await apiClient.getEquipmentHistory(equipmentId);
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to get equipment history',
+        variant: 'destructive',
+      });
+      return [];
+    }
+  };
+  
+  return {
+    equipment,
+    isLoading,
+    error,
+    updateEquipmentStatus: updateEquipmentStatus.mutate,
+    bulkDeploy: bulkDeploy.mutate,
+    bulkReturn: bulkReturn.mutate,
+    getEquipmentHistory,
+    isUpdating: updateEquipmentStatus.isPending,
+    isDeploying: bulkDeploy.isPending,
+    isReturning: bulkReturn.isPending,
+  };
+}

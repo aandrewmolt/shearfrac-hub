@@ -47,8 +47,8 @@ const CommunicationEquipmentManager: React.FC = () => {
     setDeletingAll(true);
 
     try {
-      const communicationEquipment = data.individualEquipment.filter(eq => {
-        const equipmentType = data.equipmentTypes.find(type => type.id === eq.equipmentTypeId);
+      const communicationEquipment = data?.individualEquipment?.filter(eq => {
+        const equipmentType = data?.equipmentTypes?.find(type => type.id === eq.equipmentTypeId);
         return equipmentType && equipmentType.category === 'communication' && eq.status !== 'deployed';
       });
 
@@ -71,8 +71,8 @@ const CommunicationEquipmentManager: React.FC = () => {
         toast.warning(`${communicationEquipment.length - deletedCount} items could not be deleted`);
       }
 
-      const deployedCount = data.individualEquipment.filter(eq => {
-        const equipmentType = data.equipmentTypes.find(type => type.id === eq.equipmentTypeId);
+      const deployedCount = data?.individualEquipment?.filter(eq => {
+        const equipmentType = data?.equipmentTypes?.find(type => type.id === eq.equipmentTypeId);
         return equipmentType && equipmentType.category === 'communication' && eq.status === 'deployed';
       }).length;
 
@@ -88,7 +88,7 @@ const CommunicationEquipmentManager: React.FC = () => {
   };
 
   const getEquipmentForType = (typeId: string) => {
-    const existing = data.individualEquipment.filter(eq => eq.typeId === typeId);
+    const existing = data?.individualEquipment?.filter(eq => eq.typeId === typeId);
     const drafts = draftEquipment.filter(eq => eq.typeId === typeId);
     return [...existing, ...drafts];
   };

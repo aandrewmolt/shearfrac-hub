@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useJobs } from '@/hooks/useJobs';
 import { Package, MapPin, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +20,7 @@ const ComprehensiveEquipmentDashboard: React.FC = () => {
   }> = {};
 
   // Initialize with all jobs
-  jobs.forEach(job => {
+  (jobs || []).forEach(job => {
     equipmentByJob[job.id] = {
       jobName: job.name,
       equipment: []
@@ -28,7 +28,7 @@ const ComprehensiveEquipmentDashboard: React.FC = () => {
   });
 
   // Add storage locations
-  data.storageLocations.forEach(location => {
+  (data?.storageLocations || []).forEach(location => {
     equipmentByJob[location.id] = {
       jobName: location.name,
       equipment: []
@@ -36,7 +36,7 @@ const ComprehensiveEquipmentDashboard: React.FC = () => {
   });
 
   // Process individual equipment
-  data.individualEquipment.forEach(item => {
+  (data?.individualEquipment || []).forEach(item => {
     // Check if equipment is deployed to a job
     if (item.status === 'deployed' && item.jobId) {
       const jobKey = item.jobId;
@@ -63,13 +63,13 @@ const ComprehensiveEquipmentDashboard: React.FC = () => {
 
   // Get equipment type details
   const getEquipmentType = (typeId: string) => {
-    return data.equipmentTypes.find(t => t.id === typeId);
+    return data?.equipmentTypes?.find(t => t.id === typeId);
   };
 
   // Calculate totals
   const calculateTotals = () => {
-    const totalEquipment = data.individualEquipment.length;
-    const deployedEquipment = data.individualEquipment.filter(item => item.status === 'deployed').length;
+    const totalEquipment = data?.individualEquipment?.length || 0;
+    const deployedEquipment = data?.individualEquipment?.filter(item => item.status === 'deployed').length;
 
     return { totalEquipment, deployedEquipment };
   };
@@ -109,9 +109,9 @@ const ComprehensiveEquipmentDashboard: React.FC = () => {
             <CardTitle className="text-sm font-medium">Storage Locations</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{data.storageLocations.length}</div>
+            <div className="text-2xl font-bold">{data?.storageLocations?.length || 0}</div>
             <div className="text-xs text-muted-foreground">
-              {data.storageLocations.filter(l => l.isDefault).length} default
+              {(data?.storageLocations || []).filter(l => l.isDefault).length} default
             </div>
           </CardContent>
         </Card>
@@ -135,14 +135,14 @@ const ComprehensiveEquipmentDashboard: React.FC = () => {
             </TableHeader>
             <TableBody>
               {Object.entries(equipmentByJob).flatMap(([locationId, data]) => {
-                const equipmentCount = data.equipment.length;
+                const equipmentCount = (data.equipment || []).length;
                 
                 if (equipmentCount === 0) return [];
 
-                const isJob = jobs.some(j => j.id === locationId);
+                const isJob = (jobs || []).some(j => j.id === locationId);
                 
                 // Group equipment by type
-                const groupedEquipment = data.equipment.reduce((acc, item) => {
+                const groupedEquipment = (data.equipment || []).reduce((acc, item) => {
                   const type = getEquipmentType(item.typeId);
                   const typeName = type?.name || item.typeId;
                   if (!acc[typeName]) acc[typeName] = [];

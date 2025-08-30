@@ -38,9 +38,9 @@ export const JobDeletionDialog: React.FC<JobDeletionDialogProps> = ({
   const handleClose = onOpenChange ? () => onOpenChange(false) : onClose || (() => {});
   
   // Find "Midland Office" or default location
-  const defaultLocation = data.storageLocations.find(loc => 
+  const defaultLocation = data?.storageLocations?.find(loc => 
     loc.name.toLowerCase().includes('midland') || loc.isDefault
-  ) || data.storageLocations[0];
+  ) || (data?.storageLocations || [])[0];
   
   const [selectedLocationId, setSelectedLocationId] = useState<string>(
     defaultLocation?.id || ''

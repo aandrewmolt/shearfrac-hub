@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Package, Plus, ChevronDown, ChevronRight, Edit2, Trash2 } from 'lucide-react';
 import { EquipmentType, IndividualEquipment, StorageLocation } from '@/types/inventory';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { toast } from 'sonner';
 import IndividualEquipmentForm from './IndividualEquipmentForm';
 

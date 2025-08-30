@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Zap, Satellite, Monitor } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
@@ -30,10 +30,10 @@ const FloatingDiagramControls: React.FC<FloatingDiagramControlsProps> = ({
   const isMobile = useIsMobile();
 
   // Get cable types that have available individual items
-  const availableCableTypes = inventoryData.equipmentTypes
+  const availableCableTypes = (inventoryData?.equipmentTypes || [])
     .filter(type => type.category === 'cables')
     .filter(cableType => {
-      const availableItems = inventoryData.individualEquipment
+      const availableItems = (inventoryData?.individualEquipment || [])
         .filter(item => 
           item.typeId === cableType.id && 
           (item.status === 'available' || (item.status === 'deployed' && item.jobId === jobId))

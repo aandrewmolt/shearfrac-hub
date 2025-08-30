@@ -38,7 +38,7 @@ const EquipmentListFilters: React.FC<EquipmentListFiltersProps> = ({
   getCategoryColor,
 }) => {
   const { jobs } = useJobs();
-  const uniqueCategories = [...new Set(data.equipmentTypes.map(type => type.category))];
+  const uniqueCategories = [...new Set((data?.equipmentTypes || []).map(type => type.category))];
 
   return (
     <div className="space-y-3">
@@ -73,7 +73,7 @@ const EquipmentListFilters: React.FC<EquipmentListFiltersProps> = ({
             <SelectItem value="all">All Locations</SelectItem>
             {/* Storage Locations */}
             <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">Storage Locations</div>
-            {data.storageLocations.map(location => (
+            {(data?.storageLocations || []).map(location => (
               <SelectItem key={location.id} value={location.id}>
                 <div className="flex items-center gap-2">
                   <Home className="h-3 w-3" />
@@ -85,7 +85,7 @@ const EquipmentListFilters: React.FC<EquipmentListFiltersProps> = ({
             {jobs.length > 0 && (
               <>
                 <div className="px-2 py-1 text-xs font-semibold text-muted-foreground border-t mt-1 pt-1">Jobs</div>
-                {jobs.map(job => (
+                {(jobs || []).map(job => (
                   <SelectItem key={job.id} value={job.id}>
                     <div className="flex items-center gap-2">
                       <Briefcase className="h-3 w-3" />

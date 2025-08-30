@@ -1,0 +1,701 @@
+service: rigup-backend
+
+
+custom:
+  serverless-offline:
+    httpPort: 3001
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  
+  # API Gateway configuration with caching
+  apiGateway:
+    binaryMediaTypes:
+      - 'image/*'
+      - 'application/pdf'
+    minimumCompressionSize: 1024
+    # Enable caching to reduce costs
+  
+  environment:
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    # DynamoDB Tables
+    JOBS_TABLE: ${self:service}-jobs-${self:provider.stage}
+    DIAGRAMS_TABLE: ${self:service}-diagrams-${self:provider.stage}
+    EQUIPMENT_TABLE: ${self:service}-equipment-${self:provider.stage}
+    CONTACTS_TABLE: ${self:service}-contacts-${self:provider.stage}
+    CLIENTS_TABLE: ${self:service}-clients-${self:provider.stage}
+    DEPLOYMENTS_TABLE: ${self:service}-deployments-${self:provider.stage}
+    # S3 Buckets (with account ID for uniqueness)
+    STORAGE_BUCKET: ${self:service}-storage-${self:provider.stage}-${aws:accountId}
+    PHOTOS_BUCKET: ${self:service}-photos-${self:provider.stage}-${aws:accountId}
+  
+  # IAM permissions for Lambda functions
+  iamRoleStatements:
+    # DynamoDB permissions
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchGetItem
+        - dynamodb:BatchWriteItem
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.JOBS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.JOBS_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DIAGRAMS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EQUIPMENT_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EQUIPMENT_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONTACTS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONTACTS_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CLIENTS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CLIENTS_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DEPLOYMENTS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DEPLOYMENTS_TABLE}/index/*"
+    
+    # S3 permissions
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:PutObject
+        - s3:DeleteObject
+        - s3:ListBucket
+      Resource:
+        - "arn:aws:s3:::${self:provider.environment.STORAGE_BUCKET}/*"
+        - "arn:aws:s3:::${self:provider.environment.PHOTOS_BUCKET}/*"
+        - "arn:aws:s3:::${self:provider.environment.STORAGE_BUCKET}"
+        - "arn:aws:s3:::${self:provider.environment.PHOTOS_BUCKET}"
+    
+    # S3 signed URL permissions
+    - Effect: Allow
+      Action:
+        - s3:GetObjectAcl
+        - s3:PutObjectAcl
+      Resource:
+        - "arn:aws:s3:::${self:provider.environment.STORAGE_BUCKET}/*"
+        - "arn:aws:s3:::${self:provider.environment.PHOTOS_BUCKET}/*"
+
+functions:
+  # Health check endpoint
+  healthCheck:
+    handler: src/handlers/health.check
+    events:
+      - http:
+          path: health
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: true
+      - http:
+          path: health
+          method: options
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: true
+
+  # Jobs endpoints
+  getJobs:
+    handler: src/handlers/jobs.list
+    events:
+      - http:
+          path: jobs
+          method: get
+          cors: true
+  
+  getJob:
+    handler: src/handlers/jobs.get
+    events:
+      - http:
+          path: jobs/{id}
+          method: get
+          cors: true
+  
+  createJob:
+    handler: src/handlers/jobs.create
+    events:
+      - http:
+          path: jobs
+          method: post
+          cors: true
+  
+  updateJob:
+    handler: src/handlers/jobs.update
+    events:
+      - http:
+          path: jobs/{id}
+          method: put
+          cors: true
+  
+  deleteJob:
+    handler: src/handlers/jobs.delete
+    events:
+      - http:
+          path: jobs/{id}
+          method: delete
+          cors: true
+  
+  # Diagram endpoints (stored in DynamoDB with S3 backup)
+  getDiagram:
+    handler: src/handlers/diagrams.get
+    events:
+      - http:
+          path: jobs/{id}/diagram
+          method: get
+          cors: true
+  
+  saveDiagram:
+    handler: src/handlers/diagrams.save
+    events:
+      - http:
+          path: jobs/{id}/diagram
+          method: put
+          cors: true
+  
+  # Equipment endpoints
+  getEquipment:
+    handler: src/handlers/equipment.list
+    events:
+      - http:
+          path: equipment
+          method: get
+          cors: true
+  
+  getEquipmentItem:
+    handler: src/handlers/equipment.get
+    events:
+      - http:
+          path: equipment/{id}
+          method: get
+          cors: true
+  
+  createEquipment:
+    handler: src/handlers/equipment.create
+    events:
+      - http:
+          path: equipment
+          method: post
+          cors: true
+  
+  updateEquipment:
+    handler: src/handlers/equipment.update
+    events:
+      - http:
+          path: equipment/{id}
+          method: put
+          cors: true
+  
+  updateEquipmentStatus:
+    handler: src/handlers/equipment.updateStatus
+    events:
+      - http:
+          path: equipment/{id}/status
+          method: patch
+          cors: true
+  
+  deployEquipment:
+    handler: src/handlers/equipment.deploy
+    events:
+      - http:
+          path: equipment/deploy
+          method: post
+          cors: true
+  
+  returnEquipment:
+    handler: src/handlers/equipment.return
+    events:
+      - http:
+          path: equipment/return
+          method: post
+          cors: true
+  
+  # Photo upload endpoints (using S3)
+  getUploadUrl:
+    handler: src/handlers/photos.getUploadUrl
+    events:
+      - http:
+          path: photos/upload-url
+          method: post
+          cors: true
+  
+  getPhotoUrl:
+    handler: src/handlers/photos.getPhotoUrl
+    events:
+      - http:
+          path: photos/{key}
+          method: get
+          cors: true
+  
+  deletePhoto:
+    handler: src/handlers/photos.delete
+    events:
+      - http:
+          path: photos/{key}
+          method: delete
+          cors: true
+  
+  # Contacts endpoints
+  getContacts:
+    handler: src/handlers/contacts.list
+    events:
+      - http:
+          path: contacts
+          method: get
+          cors: true
+  
+  getContact:
+    handler: src/handlers/contacts.get
+    events:
+      - http:
+          path: contacts/{id}
+          method: get
+          cors: true
+  
+  createContact:
+    handler: src/handlers/contacts.create
+    events:
+      - http:
+          path: contacts
+          method: post
+          cors: true
+  
+  updateContact:
+    handler: src/handlers/contacts.update
+    events:
+      - http:
+          path: contacts/{id}
+          method: put
+          cors: true
+  
+  deleteContact:
+    handler: src/handlers/contacts.delete
+    events:
+      - http:
+          path: contacts/{id}
+          method: delete
+          cors: true
+  
+  # Clients endpoints
+  getClients:
+    handler: src/handlers/clients.list
+    events:
+      - http:
+          path: clients
+          method: get
+          cors: true
+  
+  createClient:
+    handler: src/handlers/clients.create
+    events:
+      - http:
+          path: clients
+          method: post
+          cors: true
+  
+  # Export/Import endpoints (using S3)
+  exportData:
+    handler: src/handlers/export.exportData
+    timeout: 30
+    events:
+      - http:
+          path: export/{type}
+          method: post
+          cors: true
+  
+  importData:
+    handler: src/handlers/import.importData
+    timeout: 30
+    events:
+      - http:
+          path: import/{type}
+          method: post
+          cors: true
+  
+  listJobPhotos:
+    handler: src/handlers/photos.listJobPhotos
+    events:
+      - http:
+          path: jobs/{id}/photos
+          method: get
+          cors: true
+  
+
+resources:
+  Resources:
+    # S3 Buckets
+    StorageBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.STORAGE_BUCKET}
+        VersioningConfiguration:
+          Status: Enabled
+        LifecycleConfiguration:
+          Rules:
+            # Move to Standard-IA after 30 days
+            - Id: MoveToIA
+              Status: Enabled
+              Transitions:
+                - StorageClass: STANDARD_IA
+                  TransitionInDays: 30
+            # Move to Glacier after 90 days
+            - Id: MoveToGlacier
+              Status: Enabled
+              Transitions:
+                - StorageClass: GLACIER
+                  TransitionInDays: 90
+            # Delete old versions after 365 days
+            - Id: DeleteOldVersions
+              Status: Enabled
+              NoncurrentVersionExpirationInDays: 365
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+                - HEAD
+              MaxAge: 3000
+    
+    PhotosBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.PHOTOS_BUCKET}
+        LifecycleConfiguration:
+          Rules:
+            # Photos move to IA after 60 days
+            - Id: MovePhotosToIA
+              Status: Enabled
+              Transitions:
+                - StorageClass: STANDARD_IA
+                  TransitionInDays: 60
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+                - HEAD
+              MaxAge: 3000
+    
+    #     # CloudFront Distribution (commented out for initial deployment)
+    #     # CloudFrontDistribution:
+    #     #   Type: AWS::CloudFront::Distribution
+    #       Properties:
+    #         DistributionConfig:
+    #           Comment: RigUp API Distribution
+    #           Enabled: true
+    #           PriceClass: PriceClass_100  # Use only North America and Europe edge locations
+    #           HttpVersion: http2
+    #           Origins:
+    #             # API Gateway origin
+    #             - Id: ApiGateway
+    #               DomainName:
+    #                 Fn::Join:
+    #                   - ''
+    #                   - - Ref: ApiGatewayRestApi
+    #                     - '.execute-api.'
+    #                     - ${self:provider.region}
+    #                     - '.amazonaws.com'
+    #               OriginPath: /${self:provider.stage}
+    #               CustomOriginConfig:
+    #                 HTTPPort: 80
+    #                 HTTPSPort: 443
+    #                 OriginProtocolPolicy: https-only
+    #             # S3 Storage origin
+    #             - Id: S3Storage
+    #               DomainName:
+    #                 Fn::GetAtt: [StorageBucket, RegionalDomainName]
+    #               S3OriginConfig:
+    #                 OriginAccessIdentity:
+    #                   Fn::Join:
+    #                     - ''
+    #                     - - 'origin-access-identity/cloudfront/'
+    #                       - Ref: CloudFrontOriginAccessIdentity
+    #             # S3 Photos origin
+    #             - Id: S3Photos
+    #               DomainName:
+    #                 Fn::GetAtt: [PhotosBucket, RegionalDomainName]
+    #               S3OriginConfig:
+    #                 OriginAccessIdentity:
+    #                   Fn::Join:
+    #                     - ''
+    #                     - - 'origin-access-identity/cloudfront/'
+    #                       - Ref: CloudFrontOriginAccessIdentity
+    #           DefaultCacheBehavior:
+    #             TargetOriginId: ApiGateway
+    #             ViewerProtocolPolicy: redirect-to-https
+    #             AllowedMethods:
+    #               - GET
+    #               - HEAD
+    #               - OPTIONS
+    #               - PUT
+    #               - POST
+    #               - PATCH
+    #               - DELETE
+    #             CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # Disabled caching for API
+    #             OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf  # CORS-S3Origin
+    #             ResponseHeadersPolicyId: 67f7725c-6f97-4210-82d7-5512b31e9d03  # SecurityHeadersPolicy
+    #           CacheBehaviors:
+    #             # Cache static files from S3
+    #             - PathPattern: /storage/*
+    #               TargetOriginId: S3Storage
+    #               ViewerProtocolPolicy: redirect-to-https
+    #               CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # Managed-CachingOptimized
+    #               OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf
+    #             - PathPattern: /photos/*
+    #               TargetOriginId: S3Photos
+    #               ViewerProtocolPolicy: redirect-to-https
+    #               CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+    #               OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf
+    #             # Cache GET requests for equipment and contacts
+    #             - PathPattern: /equipment
+    #               TargetOriginId: ApiGateway
+    #               ViewerProtocolPolicy: redirect-to-https
+    #               AllowedMethods: [GET, HEAD, OPTIONS]
+    #               CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+    #               OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf
+    #             - PathPattern: /contacts
+    #               TargetOriginId: ApiGateway
+    #               ViewerProtocolPolicy: redirect-to-https
+    #               AllowedMethods: [GET, HEAD, OPTIONS]
+    #               CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+    #               OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf
+    #     
+    #     CloudFrontOriginAccessIdentity:
+    #       Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    #       Properties:
+    #         CloudFrontOriginAccessIdentityConfig:
+    #           Comment: OAI for RigUp S3 buckets
+    #     
+    # DynamoDB Tables with cost optimization
+    JobsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.JOBS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: status
+            AttributeType: S
+          - AttributeName: client
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: status-index
+            KeySchema:
+              - AttributeName: status
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          - IndexName: client-index
+            KeySchema:
+              - AttributeName: client
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        # Use On-Demand billing for cost optimization
+        BillingMode: PAY_PER_REQUEST
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        Tags:
+          - Key: Environment
+            Value: ${self:provider.stage}
+    
+    DiagramsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DIAGRAMS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: jobId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: jobId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        Tags:
+          - Key: Environment
+            Value: ${self:provider.stage}
+    
+    EquipmentTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.EQUIPMENT_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: equipmentId
+            AttributeType: S
+          - AttributeName: status
+            AttributeType: S
+          - AttributeName: jobId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: equipmentId-index
+            KeySchema:
+              - AttributeName: equipmentId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          - IndexName: status-index
+            KeySchema:
+              - AttributeName: status
+                KeyType: HASH
+            Projection:
+              ProjectionType: KEYS_ONLY
+          - IndexName: jobId-index
+            KeySchema:
+              - AttributeName: jobId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        Tags:
+          - Key: Environment
+            Value: ${self:provider.stage}
+    
+    ContactsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.CONTACTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: type
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: type-index
+            KeySchema:
+              - AttributeName: type
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+        Tags:
+          - Key: Environment
+            Value: ${self:provider.stage}
+    
+    ClientsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.CLIENTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: name-index
+            KeySchema:
+              - AttributeName: name
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+        Tags:
+          - Key: Environment
+            Value: ${self:provider.stage}
+    
+    DeploymentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DEPLOYMENTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: jobId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: jobId-index
+            KeySchema:
+              - AttributeName: jobId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+        Tags:
+          - Key: Environment
+            Value: ${self:provider.stage}
+
+  Outputs:
+    # CloudFrontDomainName (commented out since CloudFront is disabled for initial deployment)
+    # CloudFrontDomainName:
+    #   Description: CloudFront distribution domain name
+    #   Value:
+    #     Fn::GetAtt: [CloudFrontDistribution, DomainName]
+    #   Export:
+    #     Name: ${self:service}-${self:provider.stage}-CloudFrontDomain
+    
+    ApiGatewayUrl:
+      Description: API Gateway URL
+      Value:
+        Fn::Join:
+          - ''
+          - - 'https://'
+            - Ref: ApiGatewayRestApi
+            - '.execute-api.'
+            - ${self:provider.region}
+            - '.amazonaws.com/'
+            - ${self:provider.stage}
+      Export:
+        Name: ${self:service}-${self:provider.stage}-ApiGatewayUrl
+    
+    StorageBucketName:
+      Description: Storage bucket name
+      Value:
+        Ref: StorageBucket
+      Export:
+        Name: ${self:service}-${self:provider.stage}-StorageBucket
+    
+    PhotosBucketName:
+      Description: Photos bucket name
+      Value:
+        Ref: PhotosBucket
+      Export:
+        Name: ${self:service}-${self:provider.stage}-PhotosBucket

@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 
 interface ExtraEquipmentItemProps {
   extra: {
@@ -25,14 +25,14 @@ const ExtraEquipmentItem: React.FC<ExtraEquipmentItemProps> = ({
   const { data } = useInventory();
 
   const getEquipmentTypeName = (typeId: string) => {
-    return data.equipmentTypes.find(type => type.id === typeId)?.name || 'Unknown';
+    return data?.equipmentTypes?.find(type => type.id === typeId)?.name || 'Unknown';
   };
 
   const getIndividualEquipmentName = (equipmentId: string) => {
     return data.individualEquipment.find(eq => eq.id === equipmentId)?.equipmentId || 'Unknown';
   };
 
-  const equipmentType = data.equipmentTypes.find(type => type.id === extra.equipmentTypeId);
+  const equipmentType = data?.equipmentTypes?.find(type => type.id === extra.equipmentTypeId);
   const isIndividuallyTracked = equipmentType?.requiresIndividualTracking;
 
   return (

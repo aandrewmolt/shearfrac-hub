@@ -6,7 +6,7 @@ import { Package } from 'lucide-react';
 import { Node, Edge } from '@xyflow/react';
 import { useEquipmentUsageAnalyzer } from '@/hooks/equipment/useEquipmentUsageAnalyzer';
 import { ExtrasOnLocationItem } from '@/hooks/useExtrasOnLocation';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 
 interface EquipmentSummaryPanelProps {
   nodes: Node[];
@@ -40,7 +40,7 @@ const EquipmentSummaryPanel: React.FC<EquipmentSummaryPanelProps> = ({
 
   // Get extras grouped by type
   const extrasGrouped = extrasOnLocation.reduce((acc, extra) => {
-    const equipmentType = data.equipmentTypes.find(type => type.id === extra.equipmentTypeId);
+    const equipmentType = data?.equipmentTypes?.find(type => type.id === extra.equipmentTypeId);
     const typeName = equipmentType?.name || 'Unknown';
     
     if (!acc[typeName]) {

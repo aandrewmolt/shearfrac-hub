@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Bug, Loader2, CheckCircle } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useAutoFixEquipmentStatus } from '@/hooks/equipment/useAutoFixEquipmentStatus';
 
 const EquipmentStatusDebug: React.FC = () => {
@@ -18,12 +18,12 @@ const EquipmentStatusDebug: React.FC = () => {
   }, {} as Record<string, number>);
 
   // Find problematic equipment
-  const problematicEquipment = data.individualEquipment.filter(eq => 
+  const problematicEquipment = data?.individualEquipment?.filter(eq => 
     !eq.status || eq.status === '' || eq.status === null
   );
 
   // Equipment that should be available but isn't
-  const shouldBeAvailable = data.individualEquipment.filter(eq => 
+  const shouldBeAvailable = data?.individualEquipment?.filter(eq => 
     !eq.jobId && eq.status !== 'available' && eq.status !== 'maintenance' && eq.status !== 'red-tagged' && eq.status !== 'retired'
   );
 

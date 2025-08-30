@@ -1,28 +1,19 @@
 
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { useInventory } from '@/contexts/InventoryContext';
-import { useEquipmentDeletion } from '@/hooks/inventory/useEquipmentDeletion';
+import { useAwsEquipmentTypes } from '@/hooks/useAwsEquipmentTypes';
 import { toast } from 'sonner';
 import EquipmentTypeManagerHeader from './EquipmentTypeManagerHeader';
 import EquipmentTypeTable from './EquipmentTypeTable';
 import { EquipmentType, CreateEquipmentTypeInput } from '@/types/types';
 
 const EquipmentTypeManager = () => {
-  const { data, addEquipmentType, updateEquipmentType, deleteEquipmentType } = useInventory();
+  const { equipmentTypes, loading, createEquipmentType, deleteEquipmentType } = useAwsEquipmentTypes();
   const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingType, setEditingType] = useState<EquipmentType | null>(null);
 
-  const { handleDeleteEquipmentType, canDeleteEquipmentType } = useEquipmentDeletion({
-    equipmentItems: data.equipmentItems,
-    individualEquipment: data.individualEquipment,
-    deleteEquipmentItem: () => Promise.resolve(),
-    deleteEquipmentType,
-    deleteIndividualEquipment: undefined
-  });
-
-  const filteredTypes = data.equipmentTypes.filter(type =>
+  const filteredTypes = equipmentTypes.filter(type =>
     type.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     type.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -43,13 +34,32 @@ const EquipmentTypeManager = () => {
   };
 
   const getEquipmentCountForType = (typeId: string) => {
-    const equipmentItems = data.equipmentItems.filter(item => item.typeId === typeId);
-    const individualEquipment = data.individualEquipment.filter(eq => eq.typeId === typeId);
+    // For AWS, we'll need to get this data from the equipment list
+    // For now, return placeholder data
     return {
-      equipmentItems: equipmentItems.length,
-      individualEquipment: individualEquipment.length,
-      totalQuantity: equipmentItems.reduce((sum, item) => sum + item.quantity, 0)
+      equipmentItems: 0,
+      individualEquipment: 0,
+      totalQuantity: 0
     };
+  };
+
+  const canDeleteEquipmentType = (typeId: string) => {
+    // Check if equipment type can be deleted
+    const counts = getEquipmentCountForType(typeId);
+    const totalCount = counts.equipmentItems + counts.individualEquipment;
+    
+    if (totalCount > 0) {
+      return {
+        canDelete: false,
+        reason: 'Equipment type is in use',
+        details: [
+          `${counts.individualEquipment} individual equipment items`,
+          `${counts.equipmentItems} bulk equipment items`
+        ].filter(detail => !detail.startsWith('0'))
+      };
+    }
+    
+    return { canDelete: true };
   };
 
   const handleEdit = (type: EquipmentType) => {
@@ -58,22 +68,29 @@ const EquipmentTypeManager = () => {
   };
 
   const handleDelete = async (typeId: string, typeName: string) => {
-    await handleDeleteEquipmentType(typeId, typeName);
+    try {
+      await deleteEquipmentType(typeId);
+    } catch (error) {
+      // Error is already handled in the hook
+    }
   };
 
   const handleSubmit = async (formData: CreateEquipmentTypeInput) => {
     try {
       if (editingType) {
-        await updateEquipmentType(editingType.id, formData);
-        toast.success('Equipment type updated successfully');
+        // AWS doesn't support editing equipment types directly
+        toast.info('Equipment type editing not supported in AWS mode');
       } else {
-        await addEquipmentType(formData);
+        await createEquipmentType({
+          name: formData.name,
+          category: formData.category
+        });
         toast.success('Equipment type created successfully');
       }
       setIsDialogOpen(false);
       setEditingType(null);
     } catch (error) {
-      toast.error('Failed to save equipment type');
+      // Error is already handled in the hook
     }
   };
 
@@ -98,7 +115,7 @@ const EquipmentTypeManager = () => {
       
       <EquipmentTypeTable
         filteredTypes={filteredTypes}
-        data={data}
+        data={{ equipmentTypes: equipmentTypes || [] }}
         canDeleteEquipmentType={canDeleteEquipmentType}
         getEquipmentCountForType={getEquipmentCountForType}
         getCategoryColor={getCategoryColor}

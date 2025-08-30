@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 import { Cable, Square, Zap, Monitor, Satellite, MapPin, AlertTriangle, Package, CheckCircle, Info } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsEquipmentAssignment, EquipmentAssignment } from '@/hooks/useAwsEquipmentAssignment';
 import { Node, Edge } from '@xyflow/react';
 
 interface EquipmentAllocationPanelProps {
@@ -18,18 +19,67 @@ const EquipmentAllocationPanel: React.FC<EquipmentAllocationPanelProps> = ({
   edges,
   jobId
 }) => {
-  const { data: inventoryData } = useInventory();
+  const { 
+    getAvailableEquipment, 
+    getJobEquipment, 
+    assignEquipmentToJob, 
+    removeEquipmentFromJob,
+    loading 
+  } = useAwsEquipmentAssignment();
+  
+  const [availableEquipment, setAvailableEquipment] = useState<EquipmentAssignment[]>([]);
+  const [jobEquipment, setJobEquipment] = useState<EquipmentAssignment[]>([]);
 
-  const getEquipmentById = (equipmentId: string) => {
-    return inventoryData.individualEquipment.find(item => item.id === equipmentId);
+  // Load equipment data
+  useEffect(() => {
+    const loadEquipment = async () => {
+      try {
+        const [available, assigned] = await Promise.all([
+          getAvailableEquipment(),
+          getJobEquipment(jobId)
+        ]);
+        setAvailableEquipment(available);
+        setJobEquipment(assigned);
+      } catch (error) {
+        console.error('Failed to load equipment:', error);
+      }
+    };
+    
+    if (jobId) {
+      loadEquipment();
+    }
+  }, [jobId, getAvailableEquipment, getJobEquipment]);
+
+  // Handle equipment assignment
+  const handleAssignEquipment = async (equipmentId: string) => {
+    try {
+      await assignEquipmentToJob(equipmentId, jobId);
+      // Reload equipment data
+      const [available, assigned] = await Promise.all([
+        getAvailableEquipment(),
+        getJobEquipment(jobId)
+      ]);
+      setAvailableEquipment(available);
+      setJobEquipment(assigned);
+    } catch (error) {
+      console.error('Failed to assign equipment:', error);
+    }
   };
 
-  const getEquipmentType = (typeId: string) => {
-    return inventoryData.equipmentTypes.find(type => type.id === typeId);
-  };
-
-  const getLocation = (locationId: string) => {
-    return inventoryData.storageLocations.find(loc => loc.id === locationId);
+  // Handle equipment removal
+  const handleRemoveEquipment = async (equipmentId: string) => {
+    try {
+      await removeEquipmentFromJob(equipmentId, jobId);
+      // Reload equipment data
+      const [available, assigned] = await Promise.all([
+        getAvailableEquipment(),
+        getJobEquipment(jobId)
+      ]);
+      setAvailableEquipment(available);
+      setJobEquipment(assigned);
+    } catch (error) {
+      console.error('Failed to remove equipment:', error);
+    }
   };
 
   const getNodeIcon = (nodeType: string) => {
@@ -79,128 +129,87 @@ const EquipmentAllocationPanel: React.FC<EquipmentAllocationPanelProps> = ({
       <CardContent>
         <ScrollArea className="h-[calc(100vh-200px)]">
           <div className="space-y-6">
-            {/* Node Equipment Allocation */}
+            {/* Available Equipment */}
             <div>
-              <h3 className="font-semibold mb-3 text-sm text-muted-foreground">Equipment Items</h3>
+              <h3 className="font-semibold mb-3 text-sm text-muted-foreground">Available Equipment</h3>
               <div className="space-y-2">
-                {allocatableNodes.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No equipment nodes in diagram</p>
+                {loading ? (
+                  <p className="text-sm text-muted-foreground">Loading...</p>
+                ) : availableEquipment.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No available equipment</p>
                 ) : (
-                  allocatableNodes.map(node => {
-                    const assignedEquipmentId = node.data?.equipmentId;
-                    const assignedEquipment = assignedEquipmentId ? 
-                      inventoryData.individualEquipment.find(eq => eq.equipmentId === assignedEquipmentId) : 
-                      null;
-                    
-                    return (
-                      <div key={node.id} className="border rounded-lg p-3 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            {getNodeIcon(node.type || '')}
-                            <span className="font-medium text-sm">
-                              {node.data?.label || node.type}
-                            </span>
+                  availableEquipment.map(equipment => (
+                    <div key={equipment.equipmentId} className="border rounded-lg p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Package className="h-4 w-4" />
+                          <div>
+                            <span className="font-medium text-sm">{equipment.equipmentCode}</span>
+                            <p className="text-xs text-muted-foreground">{equipment.equipmentName}</p>
                           </div>
-                          {assignedEquipment ? (
-                            <Badge variant="outline" className="text-xs bg-card text-success flex items-center gap-1">
-                              <CheckCircle className="h-3 w-3" />
-                              Auto-Allocated
-                            </Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs">
-                              Available
-                            </Badge>
-                          )}
                         </div>
-                        
-                        {assignedEquipment ? (
-                          <div className="bg-card rounded p-2 space-y-1">
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm font-medium">{assignedEquipment.equipmentId}</span>
-                              <span className="text-xs text-success">
-                                {assignedEquipment.status === 'deployed' ? 'Deployed' : assignedEquipment.status}
-                              </span>
-                            </div>
-                            {assignedEquipment.serialNumber && (
-                              <p className="text-xs text-muted-foreground">Serial: {assignedEquipment.serialNumber}</p>
-                            )}
-                            {assignedEquipment.locationId && (
-                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                <MapPin className="h-3 w-3" />
-                                {getLocation(assignedEquipment.locationId)?.name || 'Storage'}
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="bg-card rounded p-2">
-                            <p className="text-xs text-muted-foreground italic">
-                              Drag equipment from inventory to assign
-                            </p>
-                          </div>
-                        )}
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">
+                            {equipment.equipmentType}
+                          </Badge>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleAssignEquipment(equipment.equipmentId)}
+                            disabled={loading}
+                          >
+                            Assign
+                          </Button>
+                        </div>
                       </div>
-                    );
-                  })
+                    </div>
+                  ))
                 )}
               </div>
             </div>
 
-            {/* Cable Allocation */}
+            {/* Assigned Equipment */}
             <div>
-              <h3 className="font-semibold mb-3 text-sm text-muted-foreground">Cable Connections</h3>
+              <h3 className="font-semibold mb-3 text-sm text-muted-foreground">Assigned to Job</h3>
               <div className="space-y-2">
-                {cableEdges.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No cable connections in diagram</p>
+                {jobEquipment.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No equipment assigned to this job</p>
                 ) : (
-                  cableEdges.map(edge => {
-                    const cableType = edge.data?.cableTypeId ? getEquipmentType(edge.data.cableTypeId) : null;
-                    
-                    return (
-                      <div key={edge.id} className="border rounded-lg p-3 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Cable className="h-4 w-4" />
-                            <span className="font-medium text-sm">
-                              {edge.data?.label || 'Cable'}
-                            </span>
+                  jobEquipment.map(equipment => (
+                    <div key={equipment.equipmentId} className="border rounded-lg p-3 bg-green-50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <div>
+                            <span className="font-medium text-sm">{equipment.equipmentCode}</span>
+                            <p className="text-xs text-muted-foreground">{equipment.equipmentName}</p>
                           </div>
-                          {cableType && (
-                            <Badge variant="outline" className="text-xs">
-                              {cableType.name}
-                            </Badge>
-                          )}
                         </div>
-                        
-                        <div className="text-xs text-muted-foreground">
-                          {edge.source} → {edge.target}
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs bg-green-100">
+                            {equipment.equipmentType}
+                          </Badge>
+                          <Button 
+                            size="sm" 
+                            variant="destructive"
+                            onClick={() => handleRemoveEquipment(equipment.equipmentId)}
+                            disabled={loading}
+                          >
+                            Remove
+                          </Button>
                         </div>
-                        
-                        {cableType ? (
-                          <div className="bg-card rounded p-2">
-                            <p className="text-xs text-foreground">
-                              Type: {cableType.name}
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="bg-card rounded p-2">
-                            <p className="text-xs text-muted-foreground">
-                              Cable type configured
-                            </p>
-                          </div>
-                        )}
                       </div>
-                    );
-                  })
+                    </div>
+                  ))
                 )}
               </div>
             </div>
 
-            {/* Summary Alert */}
+            {/* Summary */}
             <Alert>
               <Info className="h-4 w-4" />
               <AlertDescription className="text-sm">
-                <strong>Auto-Allocation Active:</strong> Equipment is automatically allocated when you drag and drop items onto nodes. 
-                When removing equipment, you'll be prompted to either return it to storage or red tag it for maintenance.
+                <strong>AWS Equipment Management:</strong> Use the buttons above to assign available equipment to this job or remove assigned equipment.
               </AlertDescription>
             </Alert>
           </div>

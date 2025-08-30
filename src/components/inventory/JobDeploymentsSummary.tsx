@@ -45,11 +45,11 @@ const JobDeploymentsSummary = () => {
   };
 
   const getEquipmentTypeName = (typeId: string) => {
-    return data.equipmentTypes.find(type => type.id === typeId)?.name || 'Unknown';
+    return data?.equipmentTypes?.find(type => type.id === typeId)?.name || 'Unknown';
   };
 
   const getLocationName = (locationId: string) => {
-    return data.storageLocations.find(loc => loc.id === locationId)?.name || 'Unknown';
+    return data?.storageLocations?.find(loc => loc.id === locationId)?.name || 'Unknown';
   };
 
   const activeJobsWithEquipment = Object.keys(deployedByJob);

@@ -15,7 +15,7 @@ import {
   Zap,
   AlertCircle
 } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useRobustEquipmentTracking } from '@/hooks/useRobustEquipmentTracking';
 import { useUnifiedEquipmentSync } from '@/hooks/useUnifiedEquipmentSync';
 import { Node, Edge } from '@xyflow/react';
@@ -46,20 +46,20 @@ const CompactJobEquipmentPanel: React.FC<CompactJobEquipmentPanelProps> = ({
   const { data, getDeployedEquipment } = useInventory();
   
   // Find "Midland Office" or default location as the initial selection
-  const defaultLocation = data.storageLocations.find(loc => 
+  const defaultLocation = data?.storageLocations?.find(loc => 
     loc.name.toLowerCase().includes('midland') || loc.isDefault
-  ) || data.storageLocations[0];
+  ) || (data?.storageLocations || [])[0];
   
   const [selectedLocation, setSelectedLocation] = useState<string>(defaultLocation?.id || '');
   const [autoAllocationEnabled, setAutoAllocationEnabled] = useState(false);
   
   // Reset to Midland Office when storage locations change
   useEffect(() => {
-    const midlandOffice = data.storageLocations.find(loc => 
+    const midlandOffice = data?.storageLocations?.find(loc => 
       loc.name.toLowerCase().includes('midland') || loc.isDefault
-    ) || data.storageLocations[0];
+    ) || (data?.storageLocations || [])[0];
     
-    if (midlandOffice && (!selectedLocation || !data.storageLocations.find(loc => loc.id === selectedLocation))) {
+    if (midlandOffice && (!selectedLocation || !data?.storageLocations?.find(loc => loc.id === selectedLocation))) {
       setSelectedLocation(midlandOffice.id);
     }
   }, [data.storageLocations, selectedLocation]);
@@ -521,7 +521,7 @@ const CompactJobEquipmentPanel: React.FC<CompactJobEquipmentPanelProps> = ({
                 </div>
                 <div className="space-y-1 max-h-32 overflow-y-auto">
                   {deployedEquipment.slice(0, 5).map(item => {
-                    const equipmentType = data.equipmentTypes.find(type => type.id === item.equipmentTypeId);
+                    const equipmentType = data?.equipmentTypes?.find(type => type.id === item.equipmentTypeId);
                     const status = getEquipmentStatus(item.id);
                     return (
                       <div key={item.id} className="flex justify-between items-center text-sm p-2 bg-card rounded">

@@ -1,0 +1,335 @@
+service: rigup-backend
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  
+  environment:
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    # DynamoDB Tables
+    JOBS_TABLE: ${self:service}-jobs-${self:provider.stage}
+    DIAGRAMS_TABLE: ${self:service}-diagrams-${self:provider.stage}
+    EQUIPMENT_TABLE: ${self:service}-equipment-${self:provider.stage}
+    CONTACTS_TABLE: ${self:service}-contacts-${self:provider.stage}
+    CLIENTS_TABLE: ${self:service}-clients-${self:provider.stage}
+    DEPLOYMENTS_TABLE: ${self:service}-deployments-${self:provider.stage}
+    # S3 Buckets
+    STORAGE_BUCKET: ${self:service}-storage-${self:provider.stage}
+    PHOTOS_BUCKET: ${self:service}-photos-${self:provider.stage}
+  
+  # IAM permissions for Lambda functions
+  iamRoleStatements:
+    # DynamoDB permissions
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchGetItem
+        - dynamodb:BatchWriteItem
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.JOBS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.JOBS_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DIAGRAMS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EQUIPMENT_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EQUIPMENT_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONTACTS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONTACTS_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CLIENTS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CLIENTS_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DEPLOYMENTS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DEPLOYMENTS_TABLE}/index/*"
+    
+    # S3 permissions
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:PutObject
+        - s3:DeleteObject
+        - s3:ListBucket
+      Resource:
+        - "arn:aws:s3:::${self:provider.environment.STORAGE_BUCKET}/*"
+        - "arn:aws:s3:::${self:provider.environment.PHOTOS_BUCKET}/*"
+        - "arn:aws:s3:::${self:provider.environment.STORAGE_BUCKET}"
+        - "arn:aws:s3:::${self:provider.environment.PHOTOS_BUCKET}"
+
+functions:
+  # Equipment endpoints
+  getEquipment:
+    handler: src/handlers/equipment.list
+    events:
+      - http:
+          path: equipment
+          method: get
+          cors: true
+  
+  createEquipment:
+    handler: src/handlers/equipment.create
+    events:
+      - http:
+          path: equipment
+          method: post
+          cors: true
+  
+  getEquipmentById:
+    handler: src/handlers/equipment.get
+    events:
+      - http:
+          path: equipment/{id}
+          method: get
+          cors: true
+  
+  updateEquipment:
+    handler: src/handlers/equipment.update
+    events:
+      - http:
+          path: equipment/{id}
+          method: put
+          cors: true
+  
+  deleteEquipment:
+    handler: src/handlers/equipment.delete
+    events:
+      - http:
+          path: equipment/{id}
+          method: delete
+          cors: true
+  
+  updateEquipmentStatus:
+    handler: src/handlers/equipment.updateStatus
+    events:
+      - http:
+          path: equipment/{id}/status
+          method: patch
+          cors: true
+  
+  deployEquipment:
+    handler: src/handlers/equipment.deploy
+    events:
+      - http:
+          path: equipment/deploy
+          method: post
+          cors: true
+  
+  returnEquipment:
+    handler: src/handlers/equipment.return
+    events:
+      - http:
+          path: equipment/return
+          method: post
+          cors: true
+  
+  # Job endpoints
+  getJobs:
+    handler: src/handlers/jobs.list
+    events:
+      - http:
+          path: jobs
+          method: get
+          cors: true
+  
+  createJob:
+    handler: src/handlers/jobs.create
+    events:
+      - http:
+          path: jobs
+          method: post
+          cors: true
+  
+  getJob:
+    handler: src/handlers/jobs.get
+    events:
+      - http:
+          path: jobs/{id}
+          method: get
+          cors: true
+  
+  updateJob:
+    handler: src/handlers/jobs.update
+    events:
+      - http:
+          path: jobs/{id}
+          method: put
+          cors: true
+  
+  deleteJob:
+    handler: src/handlers/jobs.delete
+    events:
+      - http:
+          path: jobs/{id}
+          method: delete
+          cors: true
+  
+  getJobDiagram:
+    handler: src/handlers/jobs.getDiagram
+    events:
+      - http:
+          path: jobs/{id}/diagram
+          method: get
+          cors: true
+  
+  updateJobDiagram:
+    handler: src/handlers/jobs.updateDiagram
+    events:
+      - http:
+          path: jobs/{id}/diagram
+          method: put
+          cors: true
+  
+  # Contact endpoints
+  getContacts:
+    handler: src/handlers/contacts.list
+    events:
+      - http:
+          path: contacts
+          method: get
+          cors: true
+  
+  createContact:
+    handler: src/handlers/contacts.create
+    events:
+      - http:
+          path: contacts
+          method: post
+          cors: true
+  
+  getContact:
+    handler: src/handlers/contacts.get
+    events:
+      - http:
+          path: contacts/{id}
+          method: get
+          cors: true
+  
+  updateContact:
+    handler: src/handlers/contacts.update
+    events:
+      - http:
+          path: contacts/{id}
+          method: put
+          cors: true
+  
+  deleteContact:
+    handler: src/handlers/contacts.delete
+    events:
+      - http:
+          path: contacts/{id}
+          method: delete
+          cors: true
+  
+  # Client endpoints
+  getClients:
+    handler: src/handlers/clients.list
+    events:
+      - http:
+          path: clients
+          method: get
+          cors: true
+  
+  createClient:
+    handler: src/handlers/clients.create
+    events:
+      - http:
+          path: clients
+          method: post
+          cors: true
+
+# CloudFormation resources
+resources:
+  Resources:
+    # DynamoDB Tables
+    JobsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.JOBS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    
+    EquipmentTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.EQUIPMENT_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    
+    ContactsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.CONTACTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    
+    ClientsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.CLIENTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    
+    # S3 Buckets
+    StorageBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.STORAGE_BUCKET}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+              MaxAge: 3000
+    
+    PhotosBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.PHOTOS_BUCKET}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+              MaxAge: 3000
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 3001

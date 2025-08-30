@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Monitor, Satellite, Square, Plus, X, AlertCircle, CheckCircle, RefreshCw, Tablet, Zap } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useEquipmentQueries } from '@/hooks/useEquipmentQueries';
 import { IndividualEquipment } from '@/types/inventory';
 import QuickStatusFix from '@/components/inventory/QuickStatusFix';

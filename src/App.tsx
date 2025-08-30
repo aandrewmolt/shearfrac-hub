@@ -8,9 +8,10 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { SafeInventoryProvider } from "./contexts/SafeInventoryProvider";
 import { InventoryMapperProvider } from "./contexts/InventoryMapperContext";
 import { RealtimeConnectionMonitor } from "./components/RealtimeConnectionMonitor";
-import { LocalModeBanner } from "./components/LocalModeBanner";
+// import { LocalModeBanner } from "./components/LocalModeBanner"; // Removed - using serverless for testing
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { SafeWrapper } from "./components/SafeWrapper";
+import { AwsConnectionStatus } from "./components/AwsConnectionStatus";
 
 // Import pages directly to avoid dynamic import issues in production
 import Index from "./pages/Index";
@@ -25,6 +26,8 @@ import { ContactsPage } from "./contacts/components/ContactsPage";
 // Import these dynamically to avoid module initialization issues
 import { DATABASE_MODE } from "./utils/consolidated/databaseUtils";
 import { logEnvironmentStatus } from "./utils/validateEnvironment";
+import { ensureGaugeTypes } from "./utils/ensureGaugeTypes";
+import { ensureDefaultGauges } from "./utils/ensureDefaultGauges";
 import "./App.css";
 
 // Lazy initialization to prevent module initialization issues
@@ -75,6 +78,9 @@ function App() {
         // Run database migrations
         if (DATABASE_MODE !== 'local') {
           await addClientToJobs();
+          // Ensure gauge types and equipment are initialized
+          await ensureGaugeTypes();
+          await ensureDefaultGauges();
         }
         
         // Initialize local data if in local mode
@@ -111,7 +117,10 @@ function App() {
                   <Toaster />
                   <BrowserRouter>
                     <div className="min-h-screen bg-gradient-corporate">
-                      <LocalModeBanner />
+                      <div className="flex justify-end items-center px-4 py-2 bg-background/80 backdrop-blur border-b">
+                        {/* <LocalModeBanner /> -- Removed - using serverless for testing */}
+                        <AwsConnectionStatus />
+                      </div>
                       <Routes>
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/dashboard" element={<MainDashboard />} />

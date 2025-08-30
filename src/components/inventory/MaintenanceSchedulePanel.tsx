@@ -88,12 +88,12 @@ const MaintenanceSchedulePanel: React.FC = () => {
   };
 
   const getEquipmentTypeName = (typeId: string) => {
-    const type = data.equipmentTypes.find(t => t.id === typeId);
+    const type = data?.equipmentTypes?.find(t => t.id === typeId);
     return type?.name || 'Unknown Type';
   };
 
   const getLocationName = (locationId: string) => {
-    const location = data.storageLocations.find(l => l.id === locationId);
+    const location = data?.storageLocations?.find(l => l.id === locationId);
     return location?.name || 'Unknown Location';
   };
 

@@ -1,4 +1,4 @@
-import { tursoDb } from '@/services/tursoDb';
+import awsDatabase from '@/services/awsDatabase';
 import { toast } from 'sonner';
 
 /**
@@ -7,13 +7,13 @@ import { toast } from 'sonner';
 export async function cleanupOrphanedEquipment() {
   try {
     // Get all active jobs
-    const jobs = await tursoDb.getJobs();
+    const jobs = await awsDatabase.getJobs();
     const activeJobIds = new Set(jobs.map(job => job.id));
     
     console.log('Active job IDs:', Array.from(activeJobIds));
     
-    // Get all individual equipment
-    const equipment = await tursoDb.getIndividualEquipment();
+    // Get all equipment
+    const equipment = await awsDatabase.getEquipment();
     
     console.log(`Found ${equipment.length} equipment items to check`);
     
@@ -26,7 +26,7 @@ export async function cleanupOrphanedEquipment() {
       }
       if (item.jobId && !activeJobIds.has(item.jobId)) {
         // Reset equipment to available status and clear job assignment
-        await tursoDb.updateIndividualEquipment(item.id, {
+        await awsDatabase.updateEquipment(item.id, {
           status: 'available',
           jobId: null,
           location_type: 'storage',
@@ -57,47 +57,10 @@ export async function cleanupOrphanedEquipment() {
  */
 export async function removeDuplicateJobLocations() {
   try {
-    const jobs = await tursoDb.getJobs();
-    const storageLocations = await tursoDb.getStorageLocations();
-    
-    let removedCount = 0;
-    
-    // Find storage locations that match job names (these are duplicates)
-    for (const location of storageLocations) {
-      const matchingJob = jobs.find(job => 
-        job.name === location.name || 
-        (job.client && job.pad && location.name === `${job.client} - ${job.pad}`)
-      );
-      
-      if (matchingJob && !location.isDefault) {
-        // Move any equipment from the duplicate storage location to the default location
-        const equipment = await tursoDb.getIndividualEquipment();
-        const itemsAtLocation = equipment.filter(eq => eq.locationId === location.id);
-        
-        if (itemsAtLocation.length > 0) {
-          const defaultLocation = storageLocations.find(loc => loc.isDefault);
-          if (defaultLocation) {
-            for (const item of itemsAtLocation) {
-              await tursoDb.updateIndividualEquipment(item.id, {
-                locationId: defaultLocation.id
-              });
-            }
-          }
-        }
-        
-        // Delete the duplicate storage location
-        await tursoDb.deleteStorageLocation(location.id);
-        removedCount++;
-        console.log(`Removed duplicate storage location: ${location.name}`);
-      }
-    }
-    
-    if (removedCount > 0) {
-      toast.success(`Removed ${removedCount} duplicate job locations from storage`);
-      console.log(`✅ Removed ${removedCount} duplicate job locations`);
-    }
-    
-    return removedCount;
+    const jobs = await awsDatabase.getJobs();
+    // AWS doesn't have separate storage locations - this is a no-op
+    console.log('✅ No duplicate job locations to remove (AWS backend)');
+    return 0;
   } catch (error) {
     console.error('Error removing duplicate job locations:', error);
     toast.error('Failed to remove duplicate job locations');

@@ -1,0 +1,396 @@
+@import './styles/mobile.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Corporate Design System Colors */
+    --corporate-dark: #1a1a1a;
+    --corporate-charcoal: #2d2d2d;
+    --corporate-gray: #4a4a4a;
+    --corporate-silver: #8c8c8c;
+    --corporate-light: #e0e0e0;
+    --accent-gold: #D4A017;
+    --accent-gold-dark: #b8901f;
+    --status-success: #4a7c59;
+    --status-danger: #a8312f;
+    --status-warning: #cc9900;
+    --status-info: #2e5c8a;
+    --border-subtle: #3a3a3a;
+
+    /* shadcn/ui CSS Variables - Corporate Theme */
+    /* HSL format: hue saturation lightness */
+    --background: 0 0% 10%; /* #1a1a1a corporate-dark */
+    --foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    
+    --card: 0 0% 18%; /* #2d2d2d corporate-charcoal */
+    --card-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    
+    --popover: 0 0% 18%; /* #2d2d2d corporate-charcoal */
+    --popover-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    
+    --primary: 43 85% 43%; /* #D4A017 accent-gold */
+    --primary-foreground: 0 0% 10%; /* #1a1a1a corporate-dark */
+    
+    --secondary: 0 0% 29%; /* #4a4a4a corporate-gray */
+    --secondary-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    
+    --muted: 0 0% 29%; /* #4a4a4a corporate-gray */
+    --muted-foreground: 0 0% 55%; /* #8c8c8c corporate-silver */
+    
+    --accent: 43 85% 43%; /* #D4A017 accent-gold */
+    --accent-foreground: 0 0% 10%; /* #1a1a1a corporate-dark */
+    
+    --destructive: 2 54% 42%; /* #a8312f status-danger */
+    --destructive-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    
+    --border: 0 0% 23%; /* #3a3a3a border-subtle */
+    --input: 0 0% 23%; /* #3a3a3a border-subtle */
+    --ring: 43 85% 43%; /* #D4A017 accent-gold */
+    
+    /* Chart colors */
+    --chart-1: 43 85% 43%; /* #D4A017 accent-gold */
+    --chart-2: 140 24% 38%; /* #4a7c59 status-success */
+    --chart-3: 209 50% 36%; /* #2e5c8a status-info */
+    --chart-4: 45 100% 40%; /* #cc9900 status-warning */
+    --chart-5: 2 54% 42%; /* #a8312f status-danger */
+    
+    /* Sidebar variables */
+    --sidebar-background: 0 0% 18%; /* #2d2d2d corporate-charcoal */
+    --sidebar-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    --sidebar-primary: 43 85% 43%; /* #D4A017 accent-gold */
+    --sidebar-primary-foreground: 0 0% 10%; /* #1a1a1a corporate-dark */
+    --sidebar-accent: 0 0% 29%; /* #4a4a4a corporate-gray */
+    --sidebar-accent-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    --sidebar-border: 0 0% 23%; /* #3a3a3a border-subtle */
+    --sidebar-ring: 43 85% 43%; /* #D4A017 accent-gold */
+    
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark mode uses same values as light for corporate theme */
+    --background: 0 0% 10%; /* #1a1a1a corporate-dark */
+    --foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    
+    --card: 0 0% 18%; /* #2d2d2d corporate-charcoal */
+    --card-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    
+    --popover: 0 0% 18%; /* #2d2d2d corporate-charcoal */
+    --popover-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    
+    --primary: 43 85% 43%; /* #D4A017 accent-gold */
+    --primary-foreground: 0 0% 10%; /* #1a1a1a corporate-dark */
+    
+    --secondary: 0 0% 29%; /* #4a4a4a corporate-gray */
+    --secondary-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    
+    --muted: 0 0% 29%; /* #4a4a4a corporate-gray */
+    --muted-foreground: 0 0% 55%; /* #8c8c8c corporate-silver */
+    
+    --accent: 43 85% 43%; /* #D4A017 accent-gold */
+    --accent-foreground: 0 0% 10%; /* #1a1a1a corporate-dark */
+    
+    --destructive: 2 54% 42%; /* #a8312f status-danger */
+    --destructive-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    
+    --border: 0 0% 23%; /* #3a3a3a border-subtle */
+    --input: 0 0% 23%; /* #3a3a3a border-subtle */
+    --ring: 43 85% 43%; /* #D4A017 accent-gold */
+    
+    /* Chart colors */
+    --chart-1: 43 85% 43%; /* #D4A017 accent-gold */
+    --chart-2: 140 24% 38%; /* #4a7c59 status-success */
+    --chart-3: 209 50% 36%; /* #2e5c8a status-info */
+    --chart-4: 45 100% 40%; /* #cc9900 status-warning */
+    --chart-5: 2 54% 42%; /* #a8312f status-danger */
+    
+    /* Sidebar variables */
+    --sidebar-background: 0 0% 18%; /* #2d2d2d corporate-charcoal */
+    --sidebar-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    --sidebar-primary: 43 85% 43%; /* #D4A017 accent-gold */
+    --sidebar-primary-foreground: 0 0% 10%; /* #1a1a1a corporate-dark */
+    --sidebar-accent: 0 0% 29%; /* #4a4a4a corporate-gray */
+    --sidebar-accent-foreground: 0 0% 88%; /* #e0e0e0 corporate-light */
+    --sidebar-border: 0 0% 23%; /* #3a3a3a border-subtle */
+    --sidebar-ring: 43 85% 43%; /* #D4A017 accent-gold */
+  }
+
+  * {
+    @apply m-0 p-0 box-border border-border;
+  }
+
+  body {
+    @apply font-sans bg-gradient-corporate min-h-screen text-foreground overflow-x-hidden;
+  }
+}
+
+@layer components {
+  /* Glass morphism effect */
+  .glass-morphism {
+    @apply backdrop-blur-md bg-white/10 border border-white/20 shadow-xl;
+  }
+  
+  /* Corporate glass morphism with darker theme */
+  .glass-corporate {
+    @apply backdrop-blur-md bg-corporate-charcoal/50 border border-accent-gold/20 shadow-xl;
+  }
+  
+  /* Gradient backgrounds */
+  .gradient-primary {
+    @apply bg-gradient-to-r from-accent-gold to-accent-gold-dark;
+  }
+  
+  .gradient-corporate {
+    @apply bg-gradient-to-b from-corporate-dark to-corporate-charcoal;
+  }
+  
+  /* Headers and Typography */
+  .header-corporate {
+    @apply bg-corporate-dark text-corporate-light py-4 px-5 border-b border-accent-gold sticky top-0 z-50;
+  }
+  
+  .header-title {
+    @apply text-xl font-normal tracking-widest text-corporate-light uppercase text-center;
+  }
+  
+  .header-subtitle {
+    @apply text-xs text-corporate-silver mt-0.5 uppercase tracking-wider;
+  }
+  
+  /* Button Styles */
+  .btn-base {
+    @apply px-4 py-2 text-xs font-medium uppercase tracking-wider cursor-pointer transition-all duration-200 border-none;
+  }
+  
+  .btn-primary {
+    @apply btn-base bg-accent-gold text-corporate-dark hover:bg-accent-gold-dark;
+  }
+  
+  .btn-secondary {
+    @apply btn-base bg-corporate-gray text-white hover:bg-corporate-charcoal;
+  }
+  
+  .btn-danger {
+    @apply btn-base bg-status-danger text-white hover:bg-red-800;
+  }
+  
+  .btn-success {
+    @apply btn-base bg-status-success text-white hover:bg-green-700;
+  }
+  
+  .btn-info {
+    @apply btn-base bg-status-info text-white hover:bg-blue-700;
+  }
+  
+  .btn-warning {
+    @apply btn-base bg-status-warning text-white hover:bg-yellow-700;
+  }
+  
+  /* Card Styles */
+  .card-corporate {
+    @apply bg-white border border-border-subtle p-4 rounded-lg shadow-sm;
+  }
+  
+  .card-dark {
+    @apply bg-corporate-charcoal border border-accent-gold/20 p-4 rounded-lg shadow-lg text-corporate-light;
+  }
+  
+  /* Input Styles */
+  .input-corporate {
+    @apply px-3 py-2 border border-corporate-light bg-white text-sm transition-colors duration-200 focus:outline-none focus:border-accent-gold;
+  }
+  
+  .select-corporate {
+    @apply input-corporate cursor-pointer;
+  }
+  
+  /* Status Indicators */
+  .status-success {
+    @apply bg-status-success text-white;
+  }
+  
+  .status-danger {
+    @apply bg-status-danger text-white;
+  }
+  
+  .status-warning {
+    @apply bg-status-warning text-white;
+  }
+  
+  .status-info {
+    @apply bg-status-info text-white;
+  }
+  
+  /* Tags and Badges */
+  .tag {
+    @apply text-xs px-2 py-1 uppercase font-medium rounded;
+  }
+  
+  .tag-gold {
+    @apply tag bg-accent-gold text-corporate-dark;
+  }
+  
+  .tag-success {
+    @apply tag status-success;
+  }
+  
+  .tag-danger {
+    @apply tag status-danger;
+  }
+  
+  .tag-warning {
+    @apply tag status-warning;
+  }
+  
+  .tag-info {
+    @apply tag status-info;
+  }
+  
+  /* Animation Classes */
+  .animate-pulse-gold {
+    @apply animate-pulse-gold;
+  }
+  
+  .animate-pulse-border {
+    @apply animate-pulse-border;
+  }
+  
+  /* Unassigned Field Indicators */
+  .unassigned-field {
+    @apply animate-pulse-border border-2 border-accent-gold shadow-lg;
+  }
+  
+  /* Modal Styles */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/85 flex items-center justify-center z-50;
+  }
+  
+  .modal-container {
+    @apply bg-white border border-accent-gold max-w-2xl w-11/12 max-h-[80vh] overflow-hidden flex flex-col animate-modalSlideIn;
+  }
+  
+  .modal-header {
+    @apply bg-corporate-dark text-corporate-light px-5 py-4 border-b-2 border-accent-gold flex justify-between items-center;
+  }
+  
+  .modal-body {
+    @apply p-5 overflow-y-auto flex-1;
+  }
+  
+  .modal-footer {
+    @apply px-5 py-4 border-t border-corporate-light flex gap-2 justify-end;
+  }
+  
+  /* Stat Cards */
+  .stat-card {
+    @apply p-3 bg-white/5 border border-white/10 rounded;
+  }
+  
+  .stat-label {
+    @apply text-xs opacity-70 uppercase tracking-wider;
+  }
+  
+  .stat-value {
+    @apply text-xl font-semibold text-accent-gold mt-1;
+  }
+  
+  /* Loading States */
+  .loading-spinner {
+    @apply w-12 h-12 border-4 border-corporate-light border-t-accent-gold rounded-full animate-spin;
+  }
+  
+  /* Photo Grid Specific */
+  .photo-card {
+    @apply bg-gray-50 border border-corporate-light overflow-hidden cursor-pointer transition-all duration-200 relative hover:border-corporate-silver hover:shadow-lg;
+  }
+  
+  .photo-card-selected {
+    @apply border-accent-gold bg-yellow-50;
+  }
+  
+  /* Export Button Styles */
+  .btn-export {
+    @apply btn-primary relative overflow-hidden transition-all duration-300 hover:transform hover:-translate-y-1 hover:scale-105 hover:shadow-xl animate-pulse-gold;
+  }
+  
+  /* Project Management Bar */
+  .project-bar {
+    @apply bg-corporate-charcoal p-3 rounded-lg mb-5 flex items-center justify-between shadow-md border border-border-subtle;
+  }
+  
+  /* Quick Stats Container */
+  .quick-stats {
+    @apply bg-corporate-charcoal text-white p-4 mb-5 grid grid-cols-2 md:grid-cols-4 gap-4 border border-border-subtle rounded-lg;
+  }
+  
+  /* Stunning Export Animation */
+  .stunning-export {
+    @apply relative overflow-hidden transition-all duration-300 hover:transform hover:-translate-y-1 hover:scale-105 hover:shadow-2xl animate-pulse-gold;
+  }
+  
+  .stunning-export::before {
+    content: "";
+    @apply absolute top-1/2 left-1/2 w-0 h-0 rounded-full bg-white/30 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-500;
+  }
+  
+  .stunning-export:hover::before {
+    @apply w-96 h-96;
+  }
+  
+  /* Custom scrollbar styles - Corporate Theme */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgb(45 45 45); /* corporate-charcoal */
+    border-radius: 3px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgb(212 160 23); /* accent-gold */
+    border-radius: 3px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgb(184 144 31); /* accent-gold-dark */
+  }
+  
+  /* Firefox scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(212 160 23) rgb(45 45 45);
+  }
+}
+
+@layer utilities {
+  /* Text utilities */
+  .text-corporate {
+    @apply text-corporate-dark;
+  }
+  
+  .text-gold {
+    @apply text-accent-gold;
+  }
+  
+  /* Background utilities */
+  .bg-corporate {
+    @apply bg-corporate-dark;
+  }
+  
+  .bg-gold {
+    @apply bg-accent-gold;
+  }
+  
+  /* Border utilities */
+  .border-gold {
+    @apply border-accent-gold;
+  }
+  
+  .border-corporate {
+    @apply border-corporate-dark;
+  }
+}

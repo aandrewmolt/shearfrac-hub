@@ -2,13 +2,13 @@
 import { useState, useCallback } from 'react';
 import { useNodesState, useEdgesState } from '@xyflow/react';
 import { JobEquipmentAssignment } from '@/types/equipment';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useCableTypeService } from './cables/useCableTypeService';
 import { useJobPersistence } from './useJobPersistence';
 
 export const useJobDiagramState = () => {
   const { data } = useInventory();
-  const { getDefaultCableType } = useCableTypeService(data.equipmentTypes);
+  const { getDefaultCableType } = useCableTypeService(data?.equipmentTypes || []);
   
   // React Flow state
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -42,7 +42,7 @@ export const useJobDiagramState = () => {
 
   // Initialize cable type when equipment types are available
   const initializeCableType = useCallback(() => {
-    if (!selectedCableType && data.equipmentTypes.length > 0) {
+    if (!selectedCableType && (data?.equipmentTypes?.length || 0) > 0) {
       const defaultType = getDefaultCableType();
       if (defaultType) {
         setSelectedCableType(defaultType);

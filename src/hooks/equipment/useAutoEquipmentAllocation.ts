@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useInventory } from '@/contexts/InventoryContext';
-import { tursoDb } from '@/services/tursoDb';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
+import awsDatabase from '@/services/awsDatabase';
 import { toast } from '@/hooks/use-toast';
 import { useEquipmentUsageTracking } from '@/hooks/equipment/useEquipmentUsageTracking';
 import { Node } from '@xyflow/react';
@@ -39,8 +39,8 @@ export const useAutoEquipmentAllocation = ({
     setIsProcessing(true);
     try {
       // Find the equipment in inventory
-      const equipment = inventoryData.individualEquipment.find(
-        e => e.equipmentId === equipmentId
+      const equipment = inventoryData.equipment?.find(
+        e => e.equipmentCode === equipmentId
       );
       
       if (!equipment) {
@@ -58,7 +58,7 @@ export const useAutoEquipmentAllocation = ({
       }
 
       // Update equipment status to deployed
-      await tursoDb.updateIndividualEquipment(equipment.id, {
+      await awsDatabase.updateEquipment(equipment.id, {
         status: 'deployed',
         jobId: jobId
       });
@@ -111,8 +111,8 @@ export const useAutoEquipmentAllocation = ({
     
     setIsProcessing(true);
     try {
-      const equipment = inventoryData.individualEquipment.find(
-        e => e.equipmentId === equipmentId
+      const equipment = inventoryData.equipment?.find(
+        e => e.equipmentCode === equipmentId
       );
       
       if (!equipment) {
@@ -134,7 +134,7 @@ export const useAutoEquipmentAllocation = ({
           options.severity || 'medium'
         );
 
-        await tursoDb.updateIndividualEquipment(equipment.id, {
+        await awsDatabase.updateEquipment(equipment.id, {
           status: 'red-tagged',
           jobId: null,
           notes: `Red tagged: ${options.reason} (${options.severity} severity)`
@@ -147,12 +147,12 @@ export const useAutoEquipmentAllocation = ({
         });
       } else if (options.action === 'return') {
         // Return to original storage location
-        const originalLocation = equipment.locationId || 'midland-office';
+        const originalLocation = equipment.location || 'Midland Office';
         
-        await tursoDb.updateIndividualEquipment(equipment.id, {
+        await awsDatabase.updateEquipment(equipment.id, {
           status: 'available',
           jobId: null,
-          locationId: originalLocation,
+          location: originalLocation,
           notes: `Returned from ${jobName}`
         });
 

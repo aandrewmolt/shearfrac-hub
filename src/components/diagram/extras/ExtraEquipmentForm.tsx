@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { AlertTriangle } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { toast } from 'sonner';
 
 interface ExtraEquipmentFormProps {
@@ -25,12 +25,12 @@ const ExtraEquipmentForm: React.FC<ExtraEquipmentFormProps> = ({
   const [reason, setReason] = useState('');
   const [notes, setNotes] = useState('');
 
-  const selectedType = data.equipmentTypes.find(type => type.id === selectedEquipmentType);
+  const selectedType = data?.equipmentTypes?.find(type => type.id === selectedEquipmentType);
   // All equipment is now individually tracked
   const requiresIndividualTracking = true;
 
   // Get available individual equipment for the selected type
-  const availableIndividualEquipment = data.individualEquipment.filter(
+  const availableIndividualEquipment = data?.individualEquipment?.filter(
     eq => eq.typeId === selectedEquipmentType && eq.status === 'available'
   );
 

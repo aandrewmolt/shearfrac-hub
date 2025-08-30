@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Download, FileText, Calendar } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { toast } from 'sonner';
 
 const EquipmentReportsExporter: React.FC = () => {
@@ -17,8 +17,8 @@ const EquipmentReportsExporter: React.FC = () => {
     const csvData = [
       ['Equipment ID', 'Name', 'Type', 'Category', 'Location', 'Status', 'Serial Number', 'Job ID', 'Notes', 'Last Updated'],
       ...data.individualEquipment.map(equipment => {
-        const type = data.equipmentTypes.find(t => t.id === equipment.typeId);
-        const location = data.storageLocations.find(l => l.id === equipment.locationId);
+        const type = data?.equipmentTypes?.find(t => t.id === equipment.typeId);
+        const location = data?.storageLocations?.find(l => l.id === equipment.locationId);
         return [
           equipment.equipmentId,
           equipment.name,
@@ -38,13 +38,13 @@ const EquipmentReportsExporter: React.FC = () => {
 
 
   const generateDeploymentReport = () => {
-    const deployedEquipment = data.individualEquipment.filter(eq => eq.status === 'deployed');
+    const deployedEquipment = data?.individualEquipment?.filter(eq => eq.status === 'deployed');
     
     const csvData = [
       ['Equipment ID', 'Name', 'Type', 'Job ID', 'Location', 'Serial Number', 'Deployed Date'],
       ...deployedEquipment.map(equipment => {
-        const type = data.equipmentTypes.find(t => t.id === equipment.typeId);
-        const location = data.storageLocations.find(l => l.id === equipment.locationId);
+        const type = data?.equipmentTypes?.find(t => t.id === equipment.typeId);
+        const location = data?.storageLocations?.find(l => l.id === equipment.locationId);
         return [
           equipment.equipmentId,
           equipment.name,
@@ -110,10 +110,10 @@ const EquipmentReportsExporter: React.FC = () => {
   };
 
   const getReportStats = () => {
-    const totalEquipment = data.individualEquipment.length;
-    const deployedEquipment = data.individualEquipment.filter(eq => eq.status === 'deployed').length;
-    const redTaggedEquipment = data.individualEquipment.filter(eq => eq.status === 'red-tagged').length;
-    const availableEquipment = data.individualEquipment.filter(eq => eq.status === 'available').length;
+    const totalEquipment = data?.individualEquipment?.length || 0;
+    const deployedEquipment = data?.individualEquipment?.filter(eq => eq.status === 'deployed').length;
+    const redTaggedEquipment = data?.individualEquipment?.filter(eq => eq.status === 'red-tagged').length;
+    const availableEquipment = data?.individualEquipment?.filter(eq => eq.status === 'available').length;
 
     return { totalEquipment, deployedEquipment, redTaggedEquipment, availableEquipment };
   };

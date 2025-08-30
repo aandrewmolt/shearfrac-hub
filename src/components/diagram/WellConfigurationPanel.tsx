@@ -214,15 +214,16 @@ const WellConfigurationPanel: React.FC<WellConfigurationPanelProps> = ({
                           <SelectValue placeholder="Select gauge type..." />
                         </SelectTrigger>
                         <SelectContent className="bg-card border border-border shadow-lg max-h-40 z-50">
-                          {gaugeTypes.map(gauge => (
-                            <SelectItem key={gauge.value} value={gauge.value} className="hover:bg-muted text-xs">
-                              {gauge.name}
-                            </SelectItem>
-                          ))}
-                          {gaugeTypes.length === 0 && (
-                            <SelectItem value="" disabled className="text-xs text-muted-foreground italic">
+                          {gaugeTypes.length > 0 ? (
+                            gaugeTypes.map(gauge => (
+                              <SelectItem key={gauge.value} value={gauge.value} className="hover:bg-muted text-xs">
+                                {gauge.name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="px-2 py-1.5 text-xs text-muted-foreground italic">
                               No gauge types available
-                            </SelectItem>
+                            </div>
                           )}
                         </SelectContent>
                       </Select>

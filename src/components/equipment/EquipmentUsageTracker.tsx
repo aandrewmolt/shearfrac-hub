@@ -16,7 +16,7 @@ import {
   BarChart3, Timer, Wrench, XCircle
 } from 'lucide-react';
 import { useEquipmentUsageTracking } from '@/hooks/equipment/useEquipmentUsageTracking';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useJobs } from '@/hooks/useJobs';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';

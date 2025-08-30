@@ -11,7 +11,7 @@ import {
   MapPin, Briefcase, Package, FileSpreadsheet, File,
   Wrench, XCircle, DollarSign, Users, Truck
 } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useJobs } from '@/hooks/useJobs';
 import { toast } from 'sonner';
 
@@ -32,12 +32,12 @@ const EnhancedEquipmentReports: React.FC = () => {
 
   // Calculate comprehensive statistics
   const stats = useMemo(() => {
-    const total = data.individualEquipment.length;
-    const available = data.individualEquipment.filter(eq => eq.status === 'available').length;
-    const deployed = data.individualEquipment.filter(eq => eq.status === 'deployed').length;
-    const maintenance = data.individualEquipment.filter(eq => eq.status === 'maintenance').length;
-    const redTagged = data.individualEquipment.filter(eq => eq.status === 'red-tagged').length;
-    const retired = data.individualEquipment.filter(eq => eq.status === 'retired').length;
+    const total = data?.individualEquipment?.length || 0;
+    const available = data?.individualEquipment?.filter(eq => eq.status === 'available').length;
+    const deployed = data?.individualEquipment?.filter(eq => eq.status === 'deployed').length;
+    const maintenance = data?.individualEquipment?.filter(eq => eq.status === 'maintenance').length;
+    const redTagged = data?.individualEquipment?.filter(eq => eq.status === 'red-tagged').length;
+    const retired = data?.individualEquipment?.filter(eq => eq.status === 'retired').length;
 
     // Calculate utilization rate
     const utilizationRate = total > 0 ? Math.round((deployed / total) * 100) : 0;
@@ -46,21 +46,21 @@ const EnhancedEquipmentReports: React.FC = () => {
     const availabilityRate = total > 0 ? Math.round((available / total) * 100) : 0;
 
     // Equipment by location
-    const byLocation = data.individualEquipment.reduce((acc, eq) => {
-      const locationName = data.storageLocations.find(l => l.id === eq.locationId)?.name || 'Unknown';
+    const byLocation = (data?.individualEquipment || []).reduce((acc, eq) => {
+      const locationName = data?.storageLocations?.find(l => l.id === eq.locationId)?.name || 'Unknown';
       acc[locationName] = (acc[locationName] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     // Equipment by type
-    const byType = data.individualEquipment.reduce((acc, eq) => {
-      const typeName = data.equipmentTypes.find(t => t.id === eq.typeId)?.name || 'Unknown';
+    const byType = (data?.individualEquipment || []).reduce((acc, eq) => {
+      const typeName = data?.equipmentTypes?.find(t => t.id === eq.typeId)?.name || 'Unknown';
       acc[typeName] = (acc[typeName] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     // Equipment by category
-    const byCategory = data.equipmentTypes.reduce((acc, type) => {
+    const byCategory = (data?.equipmentTypes || []).reduce((acc, type) => {
       acc[type.category] = (acc[type.category] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
@@ -71,7 +71,7 @@ const EnhancedEquipmentReports: React.FC = () => {
     ).length;
 
     // Equipment age analysis (if purchase dates available)
-    const withPurchaseDate = data.individualEquipment.filter(eq => eq.purchaseDate).length;
+    const withPurchaseDate = data?.individualEquipment?.filter(eq => eq.purchaseDate).length;
 
     return {
       total,
@@ -108,8 +108,8 @@ const EnhancedEquipmentReports: React.FC = () => {
     ];
     
     const rows = data.individualEquipment.map(equipment => {
-      const type = data.equipmentTypes.find(t => t.id === equipment.typeId);
-      const location = data.storageLocations.find(l => l.id === equipment.locationId);
+      const type = data?.equipmentTypes?.find(t => t.id === equipment.typeId);
+      const location = data?.storageLocations?.find(l => l.id === equipment.locationId);
       const job = jobs.find(j => j.id === equipment.jobId);
       
       return [
@@ -132,7 +132,7 @@ const EnhancedEquipmentReports: React.FC = () => {
   };
 
   const generateMaintenanceReport = () => {
-    const needingAttention = data.individualEquipment.filter(
+    const needingAttention = data?.individualEquipment?.filter(
       eq => eq.status === 'maintenance' || eq.status === 'red-tagged'
     );
     
@@ -142,8 +142,8 @@ const EnhancedEquipmentReports: React.FC = () => {
     ];
     
     const rows = needingAttention.map(equipment => {
-      const type = data.equipmentTypes.find(t => t.id === equipment.typeId);
-      const location = data.storageLocations.find(l => l.id === equipment.locationId);
+      const type = data?.equipmentTypes?.find(t => t.id === equipment.typeId);
+      const location = data?.storageLocations?.find(l => l.id === equipment.locationId);
       const daysSinceUpdate = Math.floor(
         (Date.now() - new Date(equipment.lastUpdated).getTime()) / (1000 * 60 * 60 * 24)
       );
@@ -170,7 +170,7 @@ const EnhancedEquipmentReports: React.FC = () => {
     ];
     
     const rows = jobs.map(job => {
-      const jobEquipment = data.individualEquipment.filter(eq => eq.jobId === job.id);
+      const jobEquipment = data?.individualEquipment?.filter(eq => eq.jobId === job.id);
       const duration = job.endDate && job.startDate ? 
         Math.floor((new Date(job.endDate).getTime() - new Date(job.startDate).getTime()) / (1000 * 60 * 60 * 24)) : 
         'Ongoing';
@@ -193,7 +193,7 @@ const EnhancedEquipmentReports: React.FC = () => {
     const headers = ['Location', 'Equipment Count', 'Available', 'Deployed', 'Maintenance', 'Equipment IDs'];
     
     const locationData = data.storageLocations.map(location => {
-      const locationEquipment = data.individualEquipment.filter(eq => eq.locationId === location.id);
+      const locationEquipment = data?.individualEquipment?.filter(eq => eq.locationId === location.id);
       const available = locationEquipment.filter(eq => eq.status === 'available').length;
       const deployed = locationEquipment.filter(eq => eq.status === 'deployed').length;
       const maintenance = locationEquipment.filter(eq => eq.status === 'maintenance').length;
@@ -262,7 +262,7 @@ const EnhancedEquipmentReports: React.FC = () => {
         case 'maintenance':
           reportData = generateMaintenanceReport();
           filename = `maintenance-report-${timestamp}`;
-          jsonData = data.individualEquipment.filter(eq => 
+          jsonData = data?.individualEquipment?.filter(eq => 
             eq.status === 'maintenance' || eq.status === 'red-tagged'
           );
           break;
@@ -271,7 +271,7 @@ const EnhancedEquipmentReports: React.FC = () => {
           filename = `utilization-report-${timestamp}`;
           jsonData = jobs.map(job => ({
             ...job,
-            equipment: data.individualEquipment.filter(eq => eq.jobId === job.id)
+            equipment: data?.individualEquipment?.filter(eq => eq.jobId === job.id)
           }));
           break;
         case 'location':
@@ -279,7 +279,7 @@ const EnhancedEquipmentReports: React.FC = () => {
           filename = `location-report-${timestamp}`;
           jsonData = data.storageLocations.map(loc => ({
             ...loc,
-            equipment: data.individualEquipment.filter(eq => eq.locationId === loc.id)
+            equipment: data?.individualEquipment?.filter(eq => eq.locationId === loc.id)
           }));
           break;
         default:

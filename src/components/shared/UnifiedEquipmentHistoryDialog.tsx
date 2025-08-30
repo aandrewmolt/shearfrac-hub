@@ -18,7 +18,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { useEquipmentHistory } from '@/hooks/equipment/useEquipmentHistory';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { IndividualEquipment } from '@/types/inventory';
 import { format } from 'date-fns';
 
@@ -97,7 +97,7 @@ export const UnifiedEquipmentHistoryDialog: React.FC<UnifiedEquipmentHistoryDial
 
   const getLocationName = (locationId: string) => {
     // Check storage locations first
-    const storageLocation = data.storageLocations.find(loc => loc.id === locationId);
+    const storageLocation = data?.storageLocations?.find(loc => loc.id === locationId);
     if (storageLocation) return storageLocation.name;
     
     // Return the ID if no location name found
@@ -105,7 +105,7 @@ export const UnifiedEquipmentHistoryDialog: React.FC<UnifiedEquipmentHistoryDial
   };
 
   const getEquipmentTypeName = (typeId: string) => {
-    const type = data.equipmentTypes.find(t => t.id === typeId);
+    const type = data?.equipmentTypes?.find(t => t.id === typeId);
     return type?.name || equipment?.type || 'Unknown Type';
   };
 

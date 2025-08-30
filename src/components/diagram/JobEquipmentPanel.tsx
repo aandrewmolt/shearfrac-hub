@@ -43,7 +43,7 @@ const JobEquipmentPanel: React.FC<JobEquipmentPanelProps> = ({
   onRemoveExtra,
 }) => {
   const { data } = useUnifiedInventory();
-  const [selectedLocation, setSelectedLocation] = useState<string>(data.storageLocations[0]?.id || '');
+  const [selectedLocation, setSelectedLocation] = useState<string>(data?.storageLocations?.[0]?.id || '');
   const { conflicts, getJobEquipment, isValidating } = useUnifiedEquipmentSync();
   
   const {
@@ -63,7 +63,7 @@ const JobEquipmentPanel: React.FC<JobEquipmentPanelProps> = ({
   const usage = analyzeEquipmentUsage();
   const report = generateEquipmentReport(usage);
   // Get deployed equipment using unified inventory method
-  const deployedEquipment = data.individualEquipment.filter(
+  const deployedEquipment = data?.individualEquipment?.filter(
     item => item.status === 'deployed' && isEquipmentAtLocation(item, jobId, 'job')
   );
   const isConsistent = validateInventoryConsistency();
@@ -287,7 +287,7 @@ const JobEquipmentPanel: React.FC<JobEquipmentPanelProps> = ({
             {deployedEquipment.length > 0 ? (
               <div className="space-y-1">
                 {deployedEquipment.map(item => {
-                  const equipmentType = data.equipmentTypes.find(type => type.id === item.equipmentTypeId);
+                  const equipmentType = data?.equipmentTypes?.find(type => type.id === item.equipmentTypeId);
                   return (
                     <div key={item.id} className="flex justify-between text-sm p-2 bg-muted rounded">
                       <span>

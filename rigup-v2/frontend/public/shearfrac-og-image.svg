@@ -1,0 +1,134 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Dark gradient background matching ShearFrac's aesthetic -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2b2b2b;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#37404c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2b2b2b;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Golden accent gradient -->
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#daa628;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f4c430;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#daa628;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Subtle blue gradient for cards -->
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#37404c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2b3640;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow effect for golden elements -->
+    <filter id="goldGlow">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Card shadow -->
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    
+    <!-- Text shadow -->
+    <filter id="textShadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Subtle grid pattern overlay -->
+  <g opacity="0.05">
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#daa628" stroke-width="0.5"/>
+    </pattern>
+    <rect width="1200" height="630" fill="url(#grid)"/>
+  </g>
+  
+  <!-- Golden accent line at top -->
+  <rect x="0" y="0" width="1200" height="3" fill="url(#goldGradient)"/>
+  
+  <!-- Main content area -->
+  <rect x="100" y="120" width="1000" height="390" rx="8" fill="#37404c" fill-opacity="0.4" stroke="#76879f" stroke-width="1" stroke-opacity="0.3"/>
+  
+  <!-- Company branding section -->
+  <g>
+    <!-- Golden accent bar -->
+    <rect x="100" y="120" width="1000" height="4" fill="url(#goldGradient)" filter="url(#goldGlow)"/>
+    
+    <!-- Company name -->
+    <text x="600" y="200" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="64" font-weight="600" fill="#ffffff" text-anchor="middle" filter="url(#textShadow)">SHEARFRAC</text>
+    
+    <!-- Tagline -->
+    <text x="600" y="240" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="22" font-weight="400" fill="#daa628" text-anchor="middle" letter-spacing="2">OPERATIONS PLATFORM</text>
+    
+    <!-- Divider line -->
+    <rect x="400" y="260" width="400" height="1" fill="#76879f" opacity="0.3"/>
+  </g>
+  
+  <!-- Three feature cards -->
+  <g>
+    <!-- Equipment Inventory Card -->
+    <g transform="translate(150, 300)">
+      <rect width="280" height="160" rx="6" fill="url(#cardGradient)" stroke="#76879f" stroke-width="1" stroke-opacity="0.2" filter="url(#shadow)"/>
+      <rect width="280" height="3" rx="1.5" fill="#daa628" opacity="0.8"/>
+      
+      <!-- Icon circle -->
+      <circle cx="40" cy="80" r="25" fill="#daa628" opacity="0.15"/>
+      <text x="40" y="90" font-family="Inter, sans-serif" font-size="28" text-anchor="middle">⚙️</text>
+      
+      <!-- Text content -->
+      <text x="85" y="50" font-family="Inter, sans-serif" font-size="20" font-weight="600" fill="#ffffff">Equipment</text>
+      <text x="85" y="75" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#76879f">Inventory tracking</text>
+      <text x="85" y="95" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#76879f">Asset management</text>
+      <text x="85" y="115" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#76879f">Deployment status</text>
+    </g>
+    
+    <!-- Contacts Management Card -->
+    <g transform="translate(460, 300)">
+      <rect width="280" height="160" rx="6" fill="url(#cardGradient)" stroke="#76879f" stroke-width="1" stroke-opacity="0.2" filter="url(#shadow)"/>
+      <rect width="280" height="3" rx="1.5" fill="#daa628" opacity="0.8"/>
+      
+      <!-- Icon circle -->
+      <circle cx="40" cy="80" r="25" fill="#daa628" opacity="0.15"/>
+      <text x="40" y="90" font-family="Inter, sans-serif" font-size="28" text-anchor="middle">📊</text>
+      
+      <!-- Text content -->
+      <text x="85" y="50" font-family="Inter, sans-serif" font-size="20" font-weight="600" fill="#ffffff">Contacts</text>
+      <text x="85" y="75" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#76879f">Client database</text>
+      <text x="85" y="95" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#76879f">Personnel records</text>
+      <text x="85" y="115" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#76879f">Vendor management</text>
+    </g>
+    
+    <!-- Rig Visualization Card -->
+    <g transform="translate(770, 300)">
+      <rect width="280" height="160" rx="6" fill="url(#cardGradient)" stroke="#76879f" stroke-width="1" stroke-opacity="0.2" filter="url(#shadow)"/>
+      <rect width="280" height="3" rx="1.5" fill="#daa628" opacity="0.8"/>
+      
+      <!-- Icon circle -->
+      <circle cx="40" cy="80" r="25" fill="#daa628" opacity="0.15"/>
+      <text x="40" y="90" font-family="Inter, sans-serif" font-size="28" text-anchor="middle">🔧</text>
+      
+      <!-- Text content -->
+      <text x="85" y="50" font-family="Inter, sans-serif" font-size="20" font-weight="600" fill="#ffffff">Visualization</text>
+      <text x="85" y="75" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#76879f">Rig configuration</text>
+      <text x="85" y="95" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#76879f">Well deployment</text>
+      <text x="85" y="115" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#76879f">Equipment layout</text>
+    </g>
+  </g>
+  
+  <!-- Bottom accent -->
+  <g>
+    <rect x="450" y="540" width="300" height="1" fill="#76879f" opacity="0.3"/>
+    <text x="600" y="570" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#76879f" text-anchor="middle" letter-spacing="1">SHEARFRAC OPERATIONS TOOLS</text>
+  </g>
+  
+  <!-- Golden accent line at bottom -->
+  <rect x="0" y="627" width="1200" height="3" fill="url(#goldGradient)"/>
+</svg>

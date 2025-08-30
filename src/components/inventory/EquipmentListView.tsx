@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Package, Plus, WifiOff, Wifi, RefreshCw, Search, Filter, AlertTriangle } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useUnifiedEquipmentSync } from '@/hooks/useUnifiedEquipmentSync';
 import { useJobs } from '@/hooks/useJobs';
 import { useAdvancedEquipmentSearch } from '@/hooks/useAdvancedEquipmentSearch';
@@ -47,17 +47,17 @@ const EquipmentListView = () => {
   });
 
   const getEquipmentTypeName = (typeId: string) => {
-    const type = data.equipmentTypes.find(t => t.id === typeId);
+    const type = data?.equipmentTypes?.find(t => t.id === typeId);
     return type?.name || 'Unknown Type';
   };
 
   const getEquipmentTypeCategory = (typeId: string) => {
-    const type = data.equipmentTypes.find(t => t.id === typeId);
+    const type = data?.equipmentTypes?.find(t => t.id === typeId);
     return type?.category || 'other';
   };
 
   const getLocationName = (locationId: string) => {
-    const location = data.storageLocations.find(l => l.id === locationId);
+    const location = data?.storageLocations?.find(l => l.id === locationId);
     return location?.name || 'Unknown Location';
   };
 
@@ -208,7 +208,7 @@ const EquipmentListView = () => {
     setShowRedTaggedOnly(false);
   };
   
-  const redTaggedCount = data.individualEquipment.filter(eq => eq.status === 'red-tagged').length;
+  const redTaggedCount = data?.individualEquipment?.filter(eq => eq.status === 'red-tagged').length;
 
   return (
     <Card className="bg-card shadow-lg">

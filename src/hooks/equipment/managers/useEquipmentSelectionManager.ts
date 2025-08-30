@@ -31,25 +31,43 @@ export const useEquipmentSelectionManager = (job: Job) => {
     console.log(`validateEquipmentSelection called with: ${equipmentId}, job: ${job.id}`);
     
     try {
-      // Skip validation for placeholder/type IDs
-      const placeholderIds = ['shearstream-box', 'starlink', 'customer-computer', 'y-adapter', 'well-gauge', 'pressure-gauge-1502', 'pressure-gauge-abra', 'pressure-gauge-pencil'];
-      if (placeholderIds.includes(equipmentId.toLowerCase())) {
-        console.log(`Skipping validation for placeholder ID: ${equipmentId}`);
-        return false;
+      // Handle equipment type selection - find available equipment of that type
+      const equipmentTypeIds = ['shearstream-box', 'starlink', 'customer-computer', 'y-adapter', 'well-gauge', 'pressure-gauge-1502', 'pressure-gauge-abra', 'pressure-gauge-pencil'];
+      if (equipmentTypeIds.includes(equipmentId.toLowerCase())) {
+        console.log(`Handling equipment type selection for: ${equipmentId}`);
+        
+        // Find available equipment of this type
+        const availableEquipment = data?.individualEquipment?.filter(
+          eq => eq.equipmentTypeId === equipmentId && eq.status === 'available'
+        ) || [];
+        
+        if (availableEquipment.length === 0) {
+          const errorMsg = `No available ${equipmentId} equipment found`;
+          console.error(errorMsg);
+          toast.error(errorMsg);
+          if (onValidationFailure) onValidationFailure(errorMsg);
+          return false;
+        }
+        
+        // Auto-select the first available equipment
+        const selectedEquipment = availableEquipment[0];
+        console.log(`Auto-selected equipment: ${selectedEquipment.equipmentId} for type ${equipmentId}`);
+        
+        if (onValidationSuccess) {
+          onValidationSuccess(selectedEquipment.equipmentId || selectedEquipment.id);
+        }
+        return true;
       }
 
       // Find equipment in inventory
-      const equipment = data.individualEquipment.find(
+      const equipment = (data?.individualEquipment || []).find(
         eq => eq.equipmentId === equipmentId || eq.id === equipmentId
       );
 
       if (!equipment) {
         const errorMsg = `Equipment ${equipmentId} not found in inventory`;
         console.error(errorMsg);
-        // Only show toast for non-placeholder IDs
-        if (!placeholderIds.some(id => equipmentId.toLowerCase().includes(id))) {
-          toast.error(errorMsg);
-        }
+        toast.error(errorMsg);
         if (onValidationFailure) onValidationFailure(errorMsg);
         return false;
       }

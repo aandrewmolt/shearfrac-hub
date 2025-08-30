@@ -43,7 +43,7 @@ const JobsList: React.FC<JobsListProps> = ({
       id: item.id,
       typeId: item.equipmentTypeId,
       quantity: 1,
-      typeName: data.equipmentTypes.find(type => type.id === item.equipmentTypeId)?.name || 'Unknown',
+      typeName: data?.equipmentTypes?.find(type => type.id === item.equipmentTypeId)?.name || 'Unknown',
     }));
   };
 

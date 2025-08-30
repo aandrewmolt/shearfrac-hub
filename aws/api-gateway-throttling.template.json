@@ -1,0 +1,310 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "API Gateway throttling configuration for RigUp Backend",
+  
+  "Parameters": {
+    "ApiGatewayId": {
+      "Type": "String",
+      "Description": "The ID of the existing API Gateway REST API"
+    },
+    "StageName": {
+      "Type": "String",
+      "Default": "dev",
+      "AllowedValues": ["dev", "staging", "prod"],
+      "Description": "Deployment stage name"
+    },
+    "DefaultRateLimit": {
+      "Type": "Number",
+      "Default": 5,
+      "MinValue": 1,
+      "MaxValue": 10000,
+      "Description": "Default rate limit (requests per second)"
+    },
+    "DefaultBurstLimit": {
+      "Type": "Number",
+      "Default": 10,
+      "MinValue": 1,
+      "MaxValue": 5000,
+      "Description": "Default burst limit (maximum requests in a burst)"
+    }
+  },
+  
+  "Resources": {
+    "ApiGatewayAccount": {
+      "Type": "AWS::ApiGateway::Account",
+      "Properties": {
+        "CloudWatchRoleArn": {
+          "Fn::GetAtt": ["ApiGatewayCloudWatchRole", "Arn"]
+        }
+      }
+    },
+    
+    "ApiGatewayCloudWatchRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": ["apigateway.amazonaws.com"]
+              },
+              "Action": ["sts:AssumeRole"]
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+        ]
+      }
+    },
+    
+    "ApiUsagePlan": {
+      "Type": "AWS::ApiGateway::UsagePlan",
+      "Properties": {
+        "UsagePlanName": {
+          "Fn::Sub": "rigup-${StageName}-usage-plan"
+        },
+        "Description": "Usage plan with throttling for RigUp API",
+        "ApiStages": [
+          {
+            "ApiId": {
+              "Ref": "ApiGatewayId"
+            },
+            "Stage": {
+              "Ref": "StageName"
+            },
+            "Throttle": {
+              "/equipment/GET": {
+                "BurstLimit": 20,
+                "RateLimit": 10
+              },
+              "/equipment/POST": {
+                "BurstLimit": 5,
+                "RateLimit": 2
+              },
+              "/equipment/*/GET": {
+                "BurstLimit": 15,
+                "RateLimit": 8
+              },
+              "/equipment/*/PUT": {
+                "BurstLimit": 5,
+                "RateLimit": 2
+              },
+              "/equipment/*/DELETE": {
+                "BurstLimit": 3,
+                "RateLimit": 1
+              },
+              "/equipment/*/status/PATCH": {
+                "BurstLimit": 10,
+                "RateLimit": 5
+              },
+              "/equipment/deploy/POST": {
+                "BurstLimit": 5,
+                "RateLimit": 3
+              },
+              "/equipment/return/POST": {
+                "BurstLimit": 5,
+                "RateLimit": 3
+              },
+              "/jobs/GET": {
+                "BurstLimit": 15,
+                "RateLimit": 8
+              },
+              "/jobs/POST": {
+                "BurstLimit": 5,
+                "RateLimit": 2
+              },
+              "/jobs/*/GET": {
+                "BurstLimit": 10,
+                "RateLimit": 5
+              },
+              "/jobs/*/PUT": {
+                "BurstLimit": 5,
+                "RateLimit": 2
+              },
+              "/jobs/*/DELETE": {
+                "BurstLimit": 3,
+                "RateLimit": 1
+              },
+              "/jobs/*/diagram/GET": {
+                "BurstLimit": 10,
+                "RateLimit": 5
+              },
+              "/jobs/*/diagram/PUT": {
+                "BurstLimit": 5,
+                "RateLimit": 2
+              },
+              "/contacts/GET": {
+                "BurstLimit": 10,
+                "RateLimit": 5
+              },
+              "/contacts/POST": {
+                "BurstLimit": 3,
+                "RateLimit": 1
+              },
+              "/contacts/*/GET": {
+                "BurstLimit": 8,
+                "RateLimit": 4
+              },
+              "/contacts/*/PUT": {
+                "BurstLimit": 3,
+                "RateLimit": 1
+              },
+              "/contacts/*/DELETE": {
+                "BurstLimit": 2,
+                "RateLimit": 1
+              },
+              "/clients/GET": {
+                "BurstLimit": 10,
+                "RateLimit": 5
+              },
+              "/clients/POST": {
+                "BurstLimit": 3,
+                "RateLimit": 1
+              }
+            }
+          }
+        ],
+        "Throttle": {
+          "BurstLimit": {
+            "Ref": "DefaultBurstLimit"
+          },
+          "RateLimit": {
+            "Ref": "DefaultRateLimit"
+          }
+        },
+        "Quota": {
+          "Limit": 10000,
+          "Period": "DAY"
+        }
+      }
+    },
+    
+    "ApiKey": {
+      "Type": "AWS::ApiGateway::ApiKey",
+      "Properties": {
+        "Name": {
+          "Fn::Sub": "rigup-${StageName}-api-key"
+        },
+        "Description": "API key for RigUp application",
+        "Enabled": true,
+        "StageKeys": [
+          {
+            "RestApiId": {
+              "Ref": "ApiGatewayId"
+            },
+            "StageName": {
+              "Ref": "StageName"
+            }
+          }
+        ]
+      }
+    },
+    
+    "ApiUsagePlanKey": {
+      "Type": "AWS::ApiGateway::UsagePlanKey",
+      "Properties": {
+        "KeyId": {
+          "Ref": "ApiKey"
+        },
+        "KeyType": "API_KEY",
+        "UsagePlanId": {
+          "Ref": "ApiUsagePlan"
+        }
+      }
+    },
+    
+    "ThrottlingAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmName": {
+          "Fn::Sub": "rigup-${StageName}-throttling-alarm"
+        },
+        "AlarmDescription": "Alert when API throttling exceeds threshold",
+        "MetricName": "4XXError",
+        "Namespace": "AWS/ApiGateway",
+        "Dimensions": [
+          {
+            "Name": "ApiName",
+            "Value": {
+              "Ref": "ApiGatewayId"
+            }
+          },
+          {
+            "Name": "Stage",
+            "Value": {
+              "Ref": "StageName"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 300,
+        "EvaluationPeriods": 1,
+        "Threshold": 50,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching"
+      }
+    },
+    
+    "HighLatencyAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmName": {
+          "Fn::Sub": "rigup-${StageName}-high-latency-alarm"
+        },
+        "AlarmDescription": "Alert when API latency is high",
+        "MetricName": "Latency",
+        "Namespace": "AWS/ApiGateway",
+        "Dimensions": [
+          {
+            "Name": "ApiName",
+            "Value": {
+              "Ref": "ApiGatewayId"
+            }
+          },
+          {
+            "Name": "Stage",
+            "Value": {
+              "Ref": "StageName"
+            }
+          }
+        ],
+        "Statistic": "Average",
+        "Period": 300,
+        "EvaluationPeriods": 2,
+        "Threshold": 1000,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching"
+      }
+    }
+  },
+  
+  "Outputs": {
+    "ApiKeyId": {
+      "Description": "API Key ID",
+      "Value": {
+        "Ref": "ApiKey"
+      }
+    },
+    "UsagePlanId": {
+      "Description": "Usage Plan ID",
+      "Value": {
+        "Ref": "ApiUsagePlan"
+      }
+    },
+    "ThrottlingAlarmName": {
+      "Description": "CloudWatch Throttling Alarm Name",
+      "Value": {
+        "Ref": "ThrottlingAlarm"
+      }
+    },
+    "HighLatencyAlarmName": {
+      "Description": "CloudWatch High Latency Alarm Name",
+      "Value": {
+        "Ref": "HighLatencyAlarm"
+      }
+    }
+  }
+}

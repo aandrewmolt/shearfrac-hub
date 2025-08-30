@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Search, X, Filter } from 'lucide-react';
 import { useAdvancedEquipmentSearch } from '@/hooks/useAdvancedEquipmentSearch';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useJobLocationIntegration } from '@/hooks/useJobLocationIntegration';
 
 const AdvancedSearchPanel: React.FC = () => {
@@ -175,7 +175,7 @@ const AdvancedSearchPanel: React.FC = () => {
           ) : (
             <div className="space-y-3">
               {searchResults.map((item) => {
-                const equipmentType = data.equipmentTypes.find(t => t.id === item.typeId);
+                const equipmentType = data?.equipmentTypes?.find(t => t.id === item.typeId);
                 const locationName = getLocationName(item.locationId);
                 
                 return (

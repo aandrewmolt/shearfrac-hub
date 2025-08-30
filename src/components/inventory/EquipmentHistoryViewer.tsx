@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { useEquipmentHistory } from '@/hooks/equipment/useEquipmentHistory';
 import { UnifiedEquipmentHistoryDialog } from '@/components/shared';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { IndividualEquipment } from '@/types/inventory';
 import { format } from 'date-fns';
 import { DATABASE_MODE } from '@/utils/consolidated/databaseUtils';

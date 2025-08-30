@@ -53,7 +53,7 @@ const JobValidationHelper: React.FC<JobValidationHelperProps> = ({
       
       // Check if deployed equipment matches current diagram requirements
       const deployedSummary = deployedItems.reduce((acc, item) => {
-        const typeName = data.equipmentTypes.find(t => t.id === item.typeId)?.name || 'Unknown';
+        const typeName = data?.equipmentTypes?.find(t => t.id === item.typeId)?.name || 'Unknown';
         acc[typeName] = (acc[typeName] || 0) + item.quantity;
         return acc;
       }, {} as { [key: string]: number });
@@ -66,7 +66,7 @@ const JobValidationHelper: React.FC<JobValidationHelperProps> = ({
         totalRequired += needed;
         const typeId = typeMapping[cableType];
         if (typeId) {
-          const typeName = data.equipmentTypes.find(t => t.id === typeId)?.name || '';
+          const typeName = data?.equipmentTypes?.find(t => t.id === typeId)?.name || '';
           const deployed = deployedSummary[typeName] || 0;
           totalDeployed += deployed;
           

@@ -30,21 +30,21 @@ const IndividualEquipmentManagerWrapper: React.FC = () => {
   });
 
   const selectedType = useMemo(() => 
-    data.equipmentTypes.find(type => type.id === selectedTypeId),
+    data?.equipmentTypes?.find(type => type.id === selectedTypeId),
     [data.equipmentTypes, selectedTypeId]
   );
 
   // Set default location if not set
   React.useEffect(() => {
-    if (!bulkAddData.locationId && data.storageLocations.length > 0) {
-      const defaultLocation = data.storageLocations.find(loc => loc.isDefault) || data.storageLocations[0];
+    if (!bulkAddData.locationId && (data?.storageLocations?.length || 0) > 0) {
+      const defaultLocation = data?.storageLocations?.find(loc => loc.isDefault) || data.storageLocations[0];
       setBulkAddData(prev => ({ ...prev, locationId: defaultLocation.id }));
     }
   }, [data.storageLocations, bulkAddData.locationId]);
 
   // Set default type if not selected
   React.useEffect(() => {
-    if (!selectedTypeId && data.equipmentTypes.length > 0) {
+    if (!selectedTypeId && (data?.equipmentTypes?.length || 0) > 0) {
       setSelectedTypeId(data.equipmentTypes[0].id);
     }
   }, [data.equipmentTypes, selectedTypeId]);
@@ -175,7 +175,7 @@ const IndividualEquipmentManagerWrapper: React.FC = () => {
             </Select>
             {selectedType && (
               <p className="text-sm text-corporate-silver">
-                Managing {data.individualEquipment.filter(eq => eq.typeId === selectedType.id).length} {selectedType.name} items
+                Managing {data?.individualEquipment?.filter(eq => eq.typeId === selectedType.id).length} {selectedType.name} items
                 {draftCount > 0 && ` (${draftCount} drafts)`}
               </p>
             )}

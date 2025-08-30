@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Square, Zap, Monitor, Satellite, AlertTriangle, CheckCircle, MapPin, Calendar } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { Node } from '@xyflow/react';
 
 interface NodeEquipmentAllocationDialogProps {

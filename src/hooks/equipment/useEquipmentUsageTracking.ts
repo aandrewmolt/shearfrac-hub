@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useEquipmentUsageTrackingV2 } from './managers/useEquipmentUsageTrackingV2';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 
 /**
  * Legacy compatibility wrapper for useEquipmentUsageTracking

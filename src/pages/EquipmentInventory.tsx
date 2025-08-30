@@ -13,7 +13,7 @@ import CommunicationEquipmentManager from '@/components/inventory/CommunicationE
 import DebugEquipmentInfo from '@/components/inventory/DebugEquipmentInfo';
 import EquipmentStatusDebug from '@/components/inventory/EquipmentStatusDebug';
 import { useDefaultDataSetup } from '@/hooks/useDefaultDataSetup';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";

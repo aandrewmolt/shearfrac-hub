@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Cable, AlertTriangle, CheckCircle, MapPin, Calendar } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { Edge } from '@xyflow/react';
 
 interface CableAllocationDialogProps {
@@ -57,11 +57,11 @@ const CableAllocationDialog: React.FC<CableAllocationDialogProps> = ({
   }, [isOpen, cableTypeId, inventoryData, edge, jobId]);
 
   const getCableType = () => {
-    return inventoryData.equipmentTypes.find(type => type.id === cableTypeId);
+    return inventoryData?.equipmentTypes?.find(type => type.id === cableTypeId);
   };
 
   const getLocation = (locationId: string) => {
-    return inventoryData.storageLocations.find(loc => loc.id === locationId);
+    return inventoryData?.storageLocations?.find(loc => loc.id === locationId);
   };
 
   const handleConfirm = () => {

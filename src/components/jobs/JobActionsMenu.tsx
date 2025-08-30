@@ -31,7 +31,7 @@ export const JobActionsMenu: React.FC<JobActionsMenuProps> = ({
 
   // Find all equipment currently deployed to this job
   const deployedEquipment = useMemo(() => {
-    return data.individualEquipment.filter(
+    return data?.individualEquipment?.filter(
       equipment => equipment.jobId === job.id && equipment.status === 'deployed'
     );
   }, [data.individualEquipment, job.id]);

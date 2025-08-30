@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, AlertCircle, Clock, RefreshCw, Package } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 // Removed Supabase realtime dependency
 import { usePopulateIndividualEquipment } from '@/hooks/inventory/usePopulateIndividualEquipment';
 import { toast } from 'sonner';
@@ -25,54 +25,69 @@ const DataSetupVerifier: React.FC = () => {
   });
 
   useEffect(() => {
-    const runVerification = () => {
-      // Check equipment types
-      const hasRequiredTypes = [
-        'Customer Computer',
-        'Starlink', 
-        'ShearStream Box',
-        '100ft Cable',
-        '200ft Cable',
-        '1502 Pressure Gauge',
-        'Y-Adapter'
-      ].every(requiredType => 
-        data.equipmentTypes.some(type => type.name === requiredType)
-      );
-      
-      // Also check for at least one 300ft cable variant
-      const has300ftCable = data.equipmentTypes.some(type => 
-        type.name === '300ft Cable (Old)' || type.name === '300ft Cable (New)'
-      );
-      
-      const hasAllRequiredTypes = hasRequiredTypes && has300ftCable;
+    if (isLoading || !data) return;
 
-      // Check storage locations
-      const hasStorageLocations = data.storageLocations.length > 0;
+    // Check equipment types
+    const hasRequiredTypes = [
+      'Customer Computer',
+      'Starlink', 
+      'ShearStream Box',
+      '100ft Cable',
+      '200ft Cable',
+      '1502 Pressure Gauge',
+      'Y-Adapter'
+    ].every(requiredType => 
+      (data?.equipmentTypes || []).some(type => type.name === requiredType)
+    );
+    
+    // Also check for at least one 300ft cable variant
+    const has300ftCable = (data?.equipmentTypes || []).some(type => 
+      type.name === '300ft Cable (Old)' || type.name === '300ft Cable (New)'
+    );
+    
+    const hasAllRequiredTypes = hasRequiredTypes && has300ftCable;
 
-      // Check data consistency
-      const allEquipmentTypesValid = data.equipmentItems.every(item => 
-        data.equipmentTypes.some(type => type.id === item.typeId)
-      );
-      const allLocationsValid = data.equipmentItems.every(item =>
-        data.storageLocations.some(location => location.id === item.locationId)
-      );
-      const dataConsistency = allEquipmentTypesValid && allLocationsValid;
+    // Check storage locations
+    const hasStorageLocations = (data?.storageLocations || []).length > 0;
+
+    // Check data consistency
+    const allEquipmentTypesValid = (data?.equipmentItems || []).every(item => 
+      (data?.equipmentTypes || []).some(type => type.id === item.typeId)
+    );
+    const allLocationsValid = (data?.equipmentItems || []).every(item =>
+      (data?.storageLocations || []).some(location => location.id === item.locationId)
+    );
+    const dataConsistency = allEquipmentTypesValid && allLocationsValid;
+    
+    // Check individual equipment - Fixed comparison operator
+    const hasIndividualEquipment = (data?.individualEquipment?.length || 0) >= 20; // Expected minimum
+
+    setVerificationResults(prev => {
+      // Only update if values actually changed to prevent infinite re-renders
+      if (
+        prev.equipmentTypes === hasAllRequiredTypes &&
+        prev.storageLocations === hasStorageLocations &&
+        prev.dataConsistency === dataConsistency &&
+        prev.individualEquipment === hasIndividualEquipment
+      ) {
+        return prev;
+      }
       
-      // Check individual equipment
-      const hasIndividualEquipment = data.individualEquipment.length >= 20; // Expected minimum
-
-      setVerificationResults({
+      return {
         equipmentTypes: hasAllRequiredTypes,
         storageLocations: hasStorageLocations,
         dataConsistency,
         individualEquipment: hasIndividualEquipment
-      });
-    };
-
-    if (!isLoading) {
-      runVerification();
-    }
-  }, [data, isLoading]);
+      };
+    });
+  }, [
+    isLoading,
+    // Use specific data properties instead of the entire object
+    data?.equipmentTypes?.length,
+    data?.storageLocations?.length,
+    data?.equipmentItems?.length,
+    data?.individualEquipment?.length
+  ]);
 
   const getStatusIcon = (status: boolean) => {
     return status ? (
@@ -133,7 +148,7 @@ const DataSetupVerifier: React.FC = () => {
               <div>
                 <div className="font-medium">Equipment Types</div>
                 <div className="text-sm text-corporate-silver">
-                  {data.equipmentTypes.length} types configured
+                  {(data?.equipmentTypes || []).length} types configured
                 </div>
               </div>
             </div>
@@ -146,7 +161,7 @@ const DataSetupVerifier: React.FC = () => {
               <div>
                 <div className="font-medium">Storage Locations</div>
                 <div className="text-sm text-corporate-silver">
-                  {data.storageLocations.length} locations configured
+                  {(data?.storageLocations || []).length} locations configured
                 </div>
               </div>
             </div>
@@ -173,7 +188,7 @@ const DataSetupVerifier: React.FC = () => {
               <div>
                 <div className="font-medium">Individual Equipment</div>
                 <div className="text-sm text-corporate-silver">
-                  {data.individualEquipment.length} items tracked
+                  {data?.individualEquipment?.length || 0} items tracked
                 </div>
               </div>
             </div>
@@ -198,7 +213,7 @@ const DataSetupVerifier: React.FC = () => {
             <div>
               <div className="font-medium">Data Summary</div>
               <div className="text-sm text-corporate-silver">
-                {data.equipmentItems.length} equipment items, {data.individualEquipment.length} individual items
+                {(data?.equipmentItems || []).length} equipment items, {data?.individualEquipment?.length || 0} individual items
               </div>
             </div>
             <Button onClick={handleForceSync} variant="outline" size="sm">

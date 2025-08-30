@@ -15,8 +15,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card } from '@/components/ui/card';
 import { RefreshCw, Package, CheckCircle, AlertCircle, Clock } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
-import { tursoDb } from '@/services/tursoDb';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
+import awsDatabase from '@/services/awsDatabase';
 import { toast } from '@/hooks/use-toast';
 import { useEquipmentUsageTracking } from '@/hooks/equipment/useEquipmentUsageTracking';
 
@@ -46,13 +46,13 @@ export const QuickEquipmentReplace: React.FC<QuickEquipmentReplaceProps> = ({
   const [selectedEquipment, setSelectedEquipment] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Find available equipment of the same type
-  const availableEquipment = inventoryData.individualEquipment.filter(
-    eq => eq.typeId === equipmentTypeId && eq.status === 'available'
-  );
+  // Find available equipment of the same type  
+  const availableEquipment = inventoryData.equipment?.filter(
+    eq => eq.equipmentType === equipmentTypeId && eq.status === 'available'
+  ) || [];
 
-  // Get equipment type details
-  const equipmentType = inventoryData.equipmentTypes.find(t => t.id === equipmentTypeId);
+  // Get equipment type details - derive from equipment
+  const equipmentType = { name: equipmentTypeId, id: equipmentTypeId };
 
   const handleReplace = async () => {
     if (!selectedEquipment) {
@@ -64,13 +64,13 @@ export const QuickEquipmentReplace: React.FC<QuickEquipmentReplaceProps> = ({
       return;
     }
 
-    const equipment = inventoryData.individualEquipment.find(eq => eq.id === selectedEquipment);
+    const equipment = inventoryData.equipment?.find(eq => eq.id === selectedEquipment);
     if (!equipment) return;
 
     setIsProcessing(true);
     try {
       // Update equipment status to deployed
-      await tursoDb.updateIndividualEquipment(equipment.id, {
+      await awsDatabase.updateEquipment(equipment.id, {
         status: 'deployed',
         jobId: jobId,
         notes: `Deployed to ${jobName} as replacement`
@@ -83,11 +83,11 @@ export const QuickEquipmentReplace: React.FC<QuickEquipmentReplaceProps> = ({
       await refreshData();
 
       // Notify parent
-      onReplaced(equipment.equipmentId, equipment.name);
+      onReplaced(equipment.equipmentCode, equipment.equipmentType);
 
       toast({
         title: "Equipment Replaced",
-        description: `${equipment.equipmentId} has been assigned as replacement`,
+        description: `${equipment.equipmentCode} has been assigned as replacement`,
       });
 
       onOpenChange(false);
@@ -128,7 +128,6 @@ export const QuickEquipmentReplace: React.FC<QuickEquipmentReplaceProps> = ({
                   <RadioGroup value={selectedEquipment} onValueChange={setSelectedEquipment}>
                     <div className="space-y-2">
                       {availableEquipment.map(eq => {
-                        const location = inventoryData.storageLocations.find(l => l.id === eq.locationId);
                         return (
                           <Card
                             key={eq.id}
@@ -140,15 +139,15 @@ export const QuickEquipmentReplace: React.FC<QuickEquipmentReplaceProps> = ({
                             <RadioGroupItem value={eq.id} />
                             <div className="flex-1">
                               <div className="flex items-center gap-2">
-                                <span className="font-medium">{eq.equipmentId}</span>
+                                <span className="font-medium">{eq.equipmentCode}</span>
                                 <Badge variant="outline" className="text-xs">
-                                  {eq.name}
+                                  {eq.equipmentType}
                                 </Badge>
                               </div>
                               <div className="text-sm text-muted-foreground mt-1">
                                 <span className="flex items-center gap-1">
                                   <Package className="h-3 w-3" />
-                                  {location?.name || 'Unknown Location'}
+                                  {eq.location || 'Unknown Location'}
                                 </span>
                               </div>
                               {eq.serialNumber && (

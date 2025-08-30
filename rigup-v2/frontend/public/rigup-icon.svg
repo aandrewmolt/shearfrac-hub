@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background Circle -->
+  <circle cx="32" cy="32" r="30" fill="#1e40af" stroke="#3b82f6" stroke-width="2"/>
+  
+  <!-- Oil Rig Tower Structure -->
+  <!-- Main Tower -->
+  <rect x="28" y="18" width="8" height="32" fill="#ffffff" rx="1"/>
+  
+  <!-- Cross Beams -->
+  <rect x="24" y="24" width="16" height="2" fill="#ffffff"/>
+  <rect x="24" y="32" width="16" height="2" fill="#ffffff"/>
+  <rect x="24" y="40" width="16" height="2" fill="#ffffff"/>
+  
+  <!-- Base Platform -->
+  <rect x="20" y="48" width="24" height="4" fill="#ffffff" rx="1"/>
+  
+  <!-- Support Legs -->
+  <rect x="24" y="18" width="2" height="30" fill="#ffffff" transform="rotate(-5 25 33)"/>
+  <rect x="38" y="18" width="2" height="30" fill="#ffffff" transform="rotate(5 39 33)"/>
+  
+  <!-- Top Platform with Derrick -->
+  <rect x="26" y="16" width="12" height="3" fill="#ffffff" rx="1"/>
+  
+  <!-- Derrick Top -->
+  <polygon points="32,10 28,16 36,16" fill="#fbbf24"/>
+  
+  <!-- Cable/Hook Line -->
+  <rect x="31" y="16" width="2" height="8" fill="#94a3b8"/>
+  
+  <!-- Small Details -->
+  <!-- Equipment boxes -->
+  <rect x="22" y="44" width="4" height="3" fill="#60a5fa" rx="0.5"/>
+  <rect x="38" y="44" width="4" height="3" fill="#60a5fa" rx="0.5"/>
+  
+  <!-- Signal/Light on top -->
+  <circle cx="32" cy="10" r="2" fill="#ef4444"/>
+</svg>

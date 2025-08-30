@@ -27,7 +27,7 @@ const RedTagManager: React.FC = () => {
   });
 
   // Only track individual equipment - bulk items don't have red tag status
-  const redTaggedItems = data.individualEquipment.filter(eq => eq.status === 'red-tagged');
+  const redTaggedItems = data?.individualEquipment?.filter(eq => eq.status === 'red-tagged');
 
   const handlePhotoUpload = async (file: File) => {
     setIsUploading(true);
@@ -120,13 +120,13 @@ const RedTagManager: React.FC = () => {
       const job = jobs.find(j => j.id === displayLocation.id);
       return job?.name || 'Unknown Job';
     } else {
-      const location = data.storageLocations.find(l => l.id === displayLocation.id);
+      const location = data?.storageLocations?.find(l => l.id === displayLocation.id);
       return location?.name || 'Unknown Location';
     }
   };
 
   const getTypeName = (typeId: string) => {
-    const type = data.equipmentTypes.find(t => t.id === typeId);
+    const type = data?.equipmentTypes?.find(t => t.id === typeId);
     return type?.name || 'Unknown Type';
   };
 
@@ -151,7 +151,7 @@ const RedTagManager: React.FC = () => {
         <div className="grid gap-4">
           {redTaggedItems.map((item) => {
             const isIndividual = 'equipmentId' in item;
-            const typeName = data.equipmentTypes.find(t => t.id === item.typeId)?.name || 'Unknown Type';
+            const typeName = data?.equipmentTypes?.find(t => t.id === item.typeId)?.name || 'Unknown Type';
             const locationName = getLocationName(item);
 
             return (

@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Package, AlertCircle, CheckCircle, Clock } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useUnifiedEquipmentSync } from '@/hooks/useUnifiedEquipmentSync';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -35,7 +35,7 @@ const EnhancedEquipmentSelector: React.FC<EnhancedEquipmentSelectorProps> = ({
     return data.individualEquipment
       .map(item => ({
         ...item,
-        equipmentType: data.equipmentTypes.find(t => t.id === item.typeId),
+        equipmentType: data?.equipmentTypes?.find(t => t.id === item.typeId),
       }))
       .filter(item => {
         if (!item.equipmentType) return false;

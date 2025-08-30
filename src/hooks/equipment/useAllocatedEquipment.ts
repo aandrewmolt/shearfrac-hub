@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Node, Edge } from '@xyflow/react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useEquipmentHistory } from '@/hooks/equipment/useEquipmentHistory';
 import { useJobs } from '@/hooks/useJobs';
 import { toast } from 'sonner';

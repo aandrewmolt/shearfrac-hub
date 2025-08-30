@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Calendar, MapPin, Monitor, Satellite, Square, AlertTriangle, CheckCircle, Tablet } from 'lucide-react';
 import { useEquipmentCRUDManager } from '@/hooks/equipment/managers/useEquipmentCRUDManager';
 import { useUnifiedEquipmentSync } from '@/hooks/useUnifiedEquipmentSync';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { JobEquipmentAssignment } from '@/types/equipment';
 
 interface UnifiedEquipmentSelectionDialogProps {

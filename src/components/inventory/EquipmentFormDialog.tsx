@@ -64,7 +64,7 @@ const EquipmentFormDialog: React.FC<EquipmentFormDialogProps> = ({
                 <SelectValue placeholder="Select equipment type" />
               </SelectTrigger>
               <SelectContent>
-                {data.equipmentTypes.map(type => (
+                {(data?.equipmentTypes || []).map(type => (
                   <SelectItem key={type.id} value={type.id}>
                     <div className="flex items-center gap-2">
                       <Badge className={getCategoryColor(type.category)}>
@@ -85,7 +85,7 @@ const EquipmentFormDialog: React.FC<EquipmentFormDialogProps> = ({
                 <SelectValue placeholder="Select location" />
               </SelectTrigger>
               <SelectContent>
-                {data.storageLocations.map(location => (
+                {(data?.storageLocations || []).map(location => (
                   <SelectItem key={location.id} value={location.id}>
                     {location.name}
                   </SelectItem>

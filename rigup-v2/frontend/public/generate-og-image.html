@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate OG Image</title>
+</head>
+<body>
+    <canvas id="canvas" width="1200" height="630"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Create gradient background
+        const gradient = ctx.createLinearGradient(0, 0, 1200, 630);
+        gradient.addColorStop(0, '#0F172A');
+        gradient.addColorStop(0.5, '#1E293B');
+        gradient.addColorStop(1, '#334155');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 1200, 630);
+        
+        // Add grid pattern
+        ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 1200; i += 50) {
+            ctx.beginPath();
+            ctx.moveTo(i, 0);
+            ctx.lineTo(i, 630);
+            ctx.stroke();
+        }
+        for (let i = 0; i <= 630; i += 50) {
+            ctx.beginPath();
+            ctx.moveTo(0, i);
+            ctx.lineTo(1200, i);
+            ctx.stroke();
+        }
+        
+        // Add decorative circles
+        const addGlowCircle = (x, y, radius) => {
+            const circleGradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+            circleGradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
+            circleGradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = circleGradient;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+        };
+        
+        addGlowCircle(100, 100, 300);
+        addGlowCircle(1100, 530, 300);
+        
+        // Draw logo box
+        const logoGradient = ctx.createLinearGradient(540, 150, 660, 270);
+        logoGradient.addColorStop(0, '#3B82F6');
+        logoGradient.addColorStop(1, '#1D4ED8');
+        ctx.fillStyle = logoGradient;
+        ctx.beginPath();
+        ctx.roundRect(540, 150, 120, 120, 24);
+        ctx.fill();
+        
+        // Add logo shadow
+        ctx.shadowColor = 'rgba(59, 130, 246, 0.4)';
+        ctx.shadowBlur = 30;
+        ctx.fillStyle = logoGradient;
+        ctx.beginPath();
+        ctx.roundRect(540, 150, 120, 120, 24);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        // Draw logo text
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 48px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('RU', 600, 210);
+        
+        // Draw main title
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetY = 4;
+        ctx.fillStyle = 'white';
+        ctx.font = '800 72px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('RigUp', 600, 340);
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
+        
+        // Draw subtitle
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = '500 28px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.fillText('Well Rig Equipment Deployment System', 600, 400);
+        
+        // Draw tagline background
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.beginPath();
+        ctx.roundRect(420, 450, 360, 50, 25);
+        ctx.fill();
+        
+        // Draw tagline border
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(420, 450, 360, 50, 25);
+        ctx.stroke();
+        
+        // Draw tagline text
+        ctx.fillStyle = '#CBD5E1';
+        ctx.font = '500 20px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.fillText('Oil & Gas Industry Solutions', 600, 475);
+        
+        // Convert to blob and download
+        canvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'rigup-og-image.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    </script>
+    <p>Image generated! Check your downloads folder for rigup-og-image.png</p>
+    <p>Upload this image to your public folder and update the meta tags.</p>
+</body>
+</html>

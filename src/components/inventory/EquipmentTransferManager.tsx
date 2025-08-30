@@ -34,7 +34,7 @@ const EquipmentTransferManager = () => {
   };
 
   const getEquipmentTypeName = (typeId: string) => {
-    const type = data.equipmentTypes.find(t => t.id === typeId);
+    const type = data?.equipmentTypes?.find(t => t.id === typeId);
     return type?.name || 'Unknown Type';
   };
 

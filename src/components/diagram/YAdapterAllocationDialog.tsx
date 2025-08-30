@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Zap, MapPin, Package } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useJobs } from '@/hooks/useJobs';
 import { IndividualEquipment } from '@/types/inventory';
 
@@ -38,20 +38,20 @@ export const YAdapterAllocationDialog: React.FC<YAdapterAllocationDialogProps> =
   const currentJob = jobs.find(j => j.id === jobId);
 
   // Get Y-adapter type ID
-  const yAdapterType = data.equipmentTypes.find(type => 
+  const yAdapterType = data?.equipmentTypes?.find(type => 
     type.id === 'y-adapter' || type.name.toLowerCase().includes('y-adapter')
   );
 
   // Get available Y-adapters
   const availableYAdapters = useMemo(() => {
-    if (!yAdapterType) return [];
+    if (!yAdapterType || !data?.individualEquipment) return [];
 
-    return data.individualEquipment.filter(item => 
+    return data?.individualEquipment?.filter(item => 
       item.typeId === yAdapterType.id &&
       item.status === 'available' &&
       !existingAllocations.includes(item.id)
     );
-  }, [data.individualEquipment, yAdapterType, existingAllocations]);
+  }, [data?.individualEquipment, yAdapterType, existingAllocations]);
 
   const handleAllocate = () => {
     const selectedEquipment = availableYAdapters.find(e => e.id === selectedEquipmentId);
@@ -85,7 +85,7 @@ export const YAdapterAllocationDialog: React.FC<YAdapterAllocationDialogProps> =
             <RadioGroup value={selectedEquipmentId} onValueChange={setSelectedEquipmentId}>
               <div className="space-y-2 max-h-[300px] overflow-y-auto">
                 {availableYAdapters.map((equipment) => {
-                  const location = data.storageLocations.find(loc => loc.id === equipment.locationId);
+                  const location = data?.storageLocations?.find(loc => loc.id === equipment.locationId);
                   
                   return (
                     <div key={equipment.id} className="flex items-center space-x-2 p-3 rounded-lg border hover:bg-accent">

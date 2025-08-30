@@ -1,0 +1,463 @@
+service: rigup-backend
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  
+  # API Gateway configuration with throttling
+  apiGateway:
+    binaryMediaTypes:
+      - 'image/*'
+      - 'application/pdf'
+    minimumCompressionSize: 1024
+    
+    # Stage-level throttling (applies to all endpoints)
+    # This is the default throttling for the entire API
+    throttle:
+      burstLimit: 10  # Maximum requests in a burst
+      rateLimit: 5    # Requests per second sustained
+    
+    # Per-endpoint throttling configuration
+    methodSettings:
+      # Equipment endpoints - Higher limits for frequently accessed data
+      - resourcePath: '/equipment'
+        method: GET
+        throttlingBurstLimit: 20
+        throttlingRateLimit: 10
+        cachingEnabled: true
+        cacheTtlInSeconds: 60
+        
+      - resourcePath: '/equipment'
+        method: POST
+        throttlingBurstLimit: 5
+        throttlingRateLimit: 2
+        
+      - resourcePath: '/equipment/{id}'
+        method: GET
+        throttlingBurstLimit: 15
+        throttlingRateLimit: 8
+        cachingEnabled: true
+        cacheTtlInSeconds: 120
+        
+      - resourcePath: '/equipment/{id}'
+        method: PUT
+        throttlingBurstLimit: 5
+        throttlingRateLimit: 2
+        
+      - resourcePath: '/equipment/{id}'
+        method: DELETE
+        throttlingBurstLimit: 3
+        throttlingRateLimit: 1
+        
+      - resourcePath: '/equipment/{id}/status'
+        method: PATCH
+        throttlingBurstLimit: 10
+        throttlingRateLimit: 5
+        
+      - resourcePath: '/equipment/deploy'
+        method: POST
+        throttlingBurstLimit: 5
+        throttlingRateLimit: 3
+        
+      - resourcePath: '/equipment/return'
+        method: POST
+        throttlingBurstLimit: 5
+        throttlingRateLimit: 3
+      
+      # Job endpoints - Moderate limits
+      - resourcePath: '/jobs'
+        method: GET
+        throttlingBurstLimit: 15
+        throttlingRateLimit: 8
+        cachingEnabled: true
+        cacheTtlInSeconds: 30
+        
+      - resourcePath: '/jobs'
+        method: POST
+        throttlingBurstLimit: 5
+        throttlingRateLimit: 2
+        
+      - resourcePath: '/jobs/{id}'
+        method: GET
+        throttlingBurstLimit: 10
+        throttlingRateLimit: 5
+        cachingEnabled: true
+        cacheTtlInSeconds: 60
+        
+      - resourcePath: '/jobs/{id}'
+        method: PUT
+        throttlingBurstLimit: 5
+        throttlingRateLimit: 2
+        
+      - resourcePath: '/jobs/{id}'
+        method: DELETE
+        throttlingBurstLimit: 3
+        throttlingRateLimit: 1
+        
+      - resourcePath: '/jobs/{id}/diagram'
+        method: GET
+        throttlingBurstLimit: 10
+        throttlingRateLimit: 5
+        cachingEnabled: true
+        cacheTtlInSeconds: 120
+        
+      - resourcePath: '/jobs/{id}/diagram'
+        method: PUT
+        throttlingBurstLimit: 5
+        throttlingRateLimit: 2
+      
+      # Contact endpoints - Lower limits
+      - resourcePath: '/contacts'
+        method: GET
+        throttlingBurstLimit: 10
+        throttlingRateLimit: 5
+        cachingEnabled: true
+        cacheTtlInSeconds: 300
+        
+      - resourcePath: '/contacts'
+        method: POST
+        throttlingBurstLimit: 3
+        throttlingRateLimit: 1
+        
+      - resourcePath: '/contacts/{id}'
+        method: GET
+        throttlingBurstLimit: 8
+        throttlingRateLimit: 4
+        cachingEnabled: true
+        cacheTtlInSeconds: 300
+        
+      - resourcePath: '/contacts/{id}'
+        method: PUT
+        throttlingBurstLimit: 3
+        throttlingRateLimit: 1
+        
+      - resourcePath: '/contacts/{id}'
+        method: DELETE
+        throttlingBurstLimit: 2
+        throttlingRateLimit: 1
+      
+      # Client endpoints - Lower limits
+      - resourcePath: '/clients'
+        method: GET
+        throttlingBurstLimit: 10
+        throttlingRateLimit: 5
+        cachingEnabled: true
+        cacheTtlInSeconds: 600
+        
+      - resourcePath: '/clients'
+        method: POST
+        throttlingBurstLimit: 3
+        throttlingRateLimit: 1
+    
+    # Usage Plan configuration for API keys (optional)
+    usagePlan:
+      - free:
+          quota:
+            limit: 1000
+            period: DAY
+          throttle:
+            burstLimit: 5
+            rateLimit: 2
+      - premium:
+          quota:
+            limit: 10000
+            period: DAY
+          throttle:
+            burstLimit: 20
+            rateLimit: 10
+  
+  environment:
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    # DynamoDB Tables
+    JOBS_TABLE: ${self:service}-jobs-${self:provider.stage}
+    DIAGRAMS_TABLE: ${self:service}-diagrams-${self:provider.stage}
+    EQUIPMENT_TABLE: ${self:service}-equipment-${self:provider.stage}
+    CONTACTS_TABLE: ${self:service}-contacts-${self:provider.stage}
+    CLIENTS_TABLE: ${self:service}-clients-${self:provider.stage}
+    DEPLOYMENTS_TABLE: ${self:service}-deployments-${self:provider.stage}
+    # S3 Buckets
+    STORAGE_BUCKET: ${self:service}-storage-${self:provider.stage}
+    PHOTOS_BUCKET: ${self:service}-photos-${self:provider.stage}
+  
+  # IAM permissions for Lambda functions
+  iamRoleStatements:
+    # DynamoDB permissions
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchGetItem
+        - dynamodb:BatchWriteItem
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.JOBS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.JOBS_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DIAGRAMS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EQUIPMENT_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EQUIPMENT_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONTACTS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONTACTS_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CLIENTS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CLIENTS_TABLE}/index/*"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DEPLOYMENTS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DEPLOYMENTS_TABLE}/index/*"
+    
+    # S3 permissions
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:PutObject
+        - s3:DeleteObject
+        - s3:ListBucket
+      Resource:
+        - "arn:aws:s3:::${self:provider.environment.STORAGE_BUCKET}/*"
+        - "arn:aws:s3:::${self:provider.environment.PHOTOS_BUCKET}/*"
+        - "arn:aws:s3:::${self:provider.environment.STORAGE_BUCKET}"
+        - "arn:aws:s3:::${self:provider.environment.PHOTOS_BUCKET}"
+
+functions:
+  # Equipment endpoints
+  getEquipment:
+    handler: src/handlers/equipment.list
+    events:
+      - http:
+          path: equipment
+          method: get
+          cors: true
+  
+  createEquipment:
+    handler: src/handlers/equipment.create
+    events:
+      - http:
+          path: equipment
+          method: post
+          cors: true
+  
+  getEquipmentById:
+    handler: src/handlers/equipment.get
+    events:
+      - http:
+          path: equipment/{id}
+          method: get
+          cors: true
+  
+  updateEquipment:
+    handler: src/handlers/equipment.update
+    events:
+      - http:
+          path: equipment/{id}
+          method: put
+          cors: true
+  
+  deleteEquipment:
+    handler: src/handlers/equipment.delete
+    events:
+      - http:
+          path: equipment/{id}
+          method: delete
+          cors: true
+  
+  updateEquipmentStatus:
+    handler: src/handlers/equipment.updateStatus
+    events:
+      - http:
+          path: equipment/{id}/status
+          method: patch
+          cors: true
+  
+  deployEquipment:
+    handler: src/handlers/equipment.deploy
+    events:
+      - http:
+          path: equipment/deploy
+          method: post
+          cors: true
+  
+  returnEquipment:
+    handler: src/handlers/equipment.return
+    events:
+      - http:
+          path: equipment/return
+          method: post
+          cors: true
+  
+  # Job endpoints
+  getJobs:
+    handler: src/handlers/jobs.list
+    events:
+      - http:
+          path: jobs
+          method: get
+          cors: true
+  
+  createJob:
+    handler: src/handlers/jobs.create
+    events:
+      - http:
+          path: jobs
+          method: post
+          cors: true
+  
+  getJob:
+    handler: src/handlers/jobs.get
+    events:
+      - http:
+          path: jobs/{id}
+          method: get
+          cors: true
+  
+  updateJob:
+    handler: src/handlers/jobs.update
+    events:
+      - http:
+          path: jobs/{id}
+          method: put
+          cors: true
+  
+  deleteJob:
+    handler: src/handlers/jobs.delete
+    events:
+      - http:
+          path: jobs/{id}
+          method: delete
+          cors: true
+  
+  getJobDiagram:
+    handler: src/handlers/jobs.getDiagram
+    events:
+      - http:
+          path: jobs/{id}/diagram
+          method: get
+          cors: true
+  
+  updateJobDiagram:
+    handler: src/handlers/jobs.updateDiagram
+    events:
+      - http:
+          path: jobs/{id}/diagram
+          method: put
+          cors: true
+  
+  # Contact endpoints
+  getContacts:
+    handler: src/handlers/contacts.list
+    events:
+      - http:
+          path: contacts
+          method: get
+          cors: true
+  
+  createContact:
+    handler: src/handlers/contacts.create
+    events:
+      - http:
+          path: contacts
+          method: post
+          cors: true
+  
+  getContact:
+    handler: src/handlers/contacts.get
+    events:
+      - http:
+          path: contacts/{id}
+          method: get
+          cors: true
+  
+  updateContact:
+    handler: src/handlers/contacts.update
+    events:
+      - http:
+          path: contacts/{id}
+          method: put
+          cors: true
+  
+  deleteContact:
+    handler: src/handlers/contacts.delete
+    events:
+      - http:
+          path: contacts/{id}
+          method: delete
+          cors: true
+  
+  # Client endpoints
+  getClients:
+    handler: src/handlers/clients.list
+    events:
+      - http:
+          path: clients
+          method: get
+          cors: true
+  
+  createClient:
+    handler: src/handlers/clients.create
+    events:
+      - http:
+          path: clients
+          method: post
+          cors: true
+
+# CloudFormation resources for additional throttling control
+resources:
+  Resources:
+    # Create custom throttling settings per stage
+    ApiGatewayStage:
+      Type: AWS::ApiGateway::Stage
+      Properties:
+        StageName: ${self:provider.stage}
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        DeploymentId:
+          Ref: ApiGatewayDeployment
+        MethodSettings:
+          - ResourcePath: '/*'
+            HttpMethod: '*'
+            ThrottlingBurstLimit: 10
+            ThrottlingRateLimit: 5
+            MetricsEnabled: true
+            DataTraceEnabled: true
+            LoggingLevel: INFO
+    
+    # CloudWatch alarms for throttling monitoring
+    ApiGatewayThrottleAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ${self:service}-${self:provider.stage}-api-throttle
+        AlarmDescription: Alert when API Gateway throttling occurs
+        MetricName: 4XXError
+        Namespace: AWS/ApiGateway
+        Dimensions:
+          - Name: ApiName
+            Value:
+              Ref: ApiGatewayRestApi
+          - Name: Stage
+            Value: ${self:provider.stage}
+        Statistic: Sum
+        Period: 60
+        EvaluationPeriods: 1
+        Threshold: 10
+        ComparisonOperator: GreaterThanThreshold
+        TreatMissingData: notBreaching
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-optimize
+  - serverless-domain-manager
+
+custom:
+  serverless-offline:
+    httpPort: 3001
+  
+  # Custom domain configuration (optional)
+  customDomain:
+    domainName: api.${self:provider.stage}.rigup.com
+    stage: ${self:provider.stage}
+    basePath: ''
+    certificateName: '*.rigup.com'
+    createRoute53Record: true
+    endpointType: regional

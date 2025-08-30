@@ -26,7 +26,7 @@ import {
   Trash,
   Loader2
 } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useJobs } from '@/hooks/useJobs';
 import { toast } from 'sonner';
 import { StorageLocation } from '@/types/types';
@@ -71,13 +71,13 @@ const UnifiedLocationsManager: React.FC = () => {
 
   // Get all locations (storage + jobs)
   const allLocations = useMemo(() => {
-    const storage = inventoryData.storageLocations.map(loc => ({
+    const storage = (inventoryData?.storageLocations || []).map(loc => ({
       ...loc,
       type: 'storage' as const,
-      equipmentCount: inventoryData.individualEquipment.filter(eq => eq.locationId === loc.id).length
+      equipmentCount: (inventoryData?.individualEquipment || []).filter(eq => eq.locationId === loc.id).length
     }));
 
-    const jobLocations = jobs.map(job => ({
+    const jobLocations = (jobs || []).map(job => ({
       id: job.id,
       name: job.name,
       address: `Client: ${job.client || 'Unknown'}`,

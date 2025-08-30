@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Contact, ContactColumn, ContactsDatabase } from '../types';
-import { tursoDb } from '@/services/tursoDb';
+import awsDatabase from '@/services/awsDatabase';
 import { toast } from 'sonner';
 import { defaultClientColumns, defaultFracColumns, defaultCustomColumns } from '../utils/columnConfig';
 import edgeSync from '@/services/edgeFunctionSync';
@@ -16,36 +16,26 @@ async function migrateFromLocalStorage() {
     const data = JSON.parse(stored) as ContactsDatabase;
     
     // Check if migration already happened
-    const existingContacts = await tursoDb.getContacts();
+    const existingContacts = await awsDatabase.getContacts();
     if (existingContacts.length > 0) {
-      console.log('Contacts already migrated to Turso');
+      console.log('Contacts already migrated to AWS');
       return false;
     }
     
-    console.log('Migrating contacts from localStorage to Turso...');
+    console.log('Migrating contacts from localStorage to AWS...');
     
     // Migrate contacts
     for (const contact of data.contacts) {
-      await tursoDb.createContact(contact);
+      await awsDatabase.createContact(contact);
     }
     
-    // Migrate custom types
-    for (const customType of data.customTypes || []) {
-      if (customType !== 'client' && customType !== 'frac') {
-        await tursoDb.createCustomContactType(customType);
-      }
-    }
-    
-    // Migrate column settings
-    for (const [type, columns] of Object.entries(data.columnSettings || {})) {
-      await tursoDb.saveColumnSettings(type, columns as ContactColumn[]);
-    }
+    // Skip custom types and column settings for now - not implemented in AWS yet
     
     // Clear localStorage after successful migration
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(STORAGE_KEY + '_sha');
     
-    console.log(`✅ Migrated ${data.contacts.length} contacts to Turso`);
+    console.log(`✅ Migrated ${data.contacts.length} contacts to AWS`);
     toast.success(`Migrated ${data.contacts.length} contacts to cloud storage!`);
     return true;
   } catch (error) {
@@ -80,27 +70,19 @@ export function useTursoContacts() {
       await migrateFromLocalStorage();
       
       // Load contacts
-      const contactsData = await tursoDb.getContacts();
+      const contactsData = await awsDatabase.getContacts();
       setContacts(contactsData);
       
-      // Load custom types
-      const typesData = await tursoDb.getCustomContactTypes();
-      const typeNames = typesData.map(t => t.name as string);
-      setCustomTypes(['Coldbore', ...typeNames]);
+      // Set default custom types for now (until AWS backend supports custom types)
+      setCustomTypes(['Coldbore']);
       
-      // Load column settings for each type
-      const settings: Record<string, ContactColumn[]> = {};
-      for (const type of ['client', 'frac', 'custom', ...typeNames]) {
-        const cols = await tursoDb.getColumnSettings(type);
-        if (cols) {
-          settings[type] = cols;
-        } else {
-          // Use defaults
-          if (type === 'client') settings[type] = defaultClientColumns;
-          else if (type === 'frac') settings[type] = defaultFracColumns;
-          else settings[type] = defaultCustomColumns;
-        }
-      }
+      // Use default column settings for now
+      const settings: Record<string, ContactColumn[]> = {
+        client: defaultClientColumns,
+        frac: defaultFracColumns,
+        custom: defaultCustomColumns,
+        Coldbore: defaultCustomColumns,
+      };
       setColumnSettings(settings);
       
     } catch (err) {
@@ -115,14 +97,14 @@ export function useTursoContacts() {
   const addContact = async (contact: Contact) => {
     try {
       setIsSyncing(true);
-      const newContact = await tursoDb.createContact(contact);
+      const newContact = await awsDatabase.createContact(contact);
       
       // Optimistically update local state
       setContacts(prev => [...prev, newContact]);
       
       // Add custom type if needed
       if (contact.type !== 'client' && contact.type !== 'frac' && !customTypes.includes(contact.type)) {
-        await tursoDb.createCustomContactType(contact.type);
+        // Custom contact types not yet implemented in AWS backend
         setCustomTypes(prev => [...prev, contact.type]);
       }
       
@@ -167,7 +149,7 @@ export function useTursoContacts() {
   const updateContact = async (id: string, contact: Contact) => {
     try {
       setIsSyncing(true);
-      await tursoDb.updateContact(id, contact);
+      await awsDatabase.updateContact(id, contact);
       
       // Optimistically update local state
       setContacts(prev => prev.map(c => c.id === id ? contact : c));
@@ -201,7 +183,7 @@ export function useTursoContacts() {
   const deleteContact = async (id: string) => {
     try {
       setIsSyncing(true);
-      await tursoDb.deleteContact(id);
+      await awsDatabase.deleteContact(id);
       
       // Optimistically update local state
       setContacts(prev => prev.filter(c => c.id !== id));
@@ -235,7 +217,7 @@ export function useTursoContacts() {
   const updateColumnSettings = async (type: string, columns: ContactColumn[]) => {
     try {
       setIsSyncing(true);
-      await tursoDb.saveColumnSettings(type, columns);
+      // Column settings not yet implemented in AWS backend
       
       // Update local state
       setColumnSettings(prev => ({
@@ -257,7 +239,7 @@ export function useTursoContacts() {
     
     try {
       setIsSyncing(true);
-      await tursoDb.createCustomContactType(typeName);
+      // Custom contact types not yet implemented in AWS backend
       
       // Update local state
       setCustomTypes(prev => [...prev, typeName]);
@@ -281,7 +263,7 @@ export function useTursoContacts() {
     if (!query) return contacts;
     
     try {
-      const results = await tursoDb.searchContacts(query);
+      const results = await awsDatabase.searchContacts(query);
       return results;
     } catch (err) {
       console.error('Search failed:', err);

@@ -1,4 +1,4 @@
-import { tursoDb } from '@/services/tursoDb';
+import awsDatabase from '@/services/awsDatabase';
 import { toast } from 'sonner';
 
 export interface TransactionOperation {
@@ -47,7 +47,7 @@ export class TransactionManager {
   }
 
   private async executeOperation(operation: TransactionOperation): Promise<unknown> {
-    const { op, table, data, id, conditions } = operation;
+    const { operation: op, table, data, id, conditions } = operation;
     
     switch (op) {
       case 'insert':
@@ -73,20 +73,12 @@ export class TransactionManager {
   }
 
   private async executeInsert(table: string, data: Record<string, unknown>): Promise<unknown> {
-    // Map table names to tursoDb methods
+    // Map table names to AWS methods
     switch (table) {
       case 'jobs':
-        return await tursoDb.createJob(data);
-      case 'equipment_items':
-        return await tursoDb.createEquipmentItem(data);
-      case 'individual_equipment':
-        return await tursoDb.createIndividualEquipment(data);
-      case 'equipment_types':
-        return await tursoDb.createEquipmentType(data);
-      case 'storage_locations':
-        return await tursoDb.createStorageLocation(data);
-      case 'bulk_equipment_deployments':
-        return await tursoDb.createBulkDeployment(data);
+        return await awsDatabase.createJob(data);
+      case 'equipment':
+        return await awsDatabase.createEquipment(data);
       default:
         throw new Error(`Unsupported table for insert: ${table}`);
     }
@@ -104,17 +96,9 @@ export class TransactionManager {
 
     switch (table) {
       case 'jobs':
-        return await tursoDb.updateJob(id, data);
-      case 'equipment_items':
-        return await tursoDb.updateEquipmentItem(id, data);
-      case 'individual_equipment':
-        return await tursoDb.updateIndividualEquipment(id, data);
-      case 'equipment_types':
-        return await tursoDb.updateEquipmentType(id, data);
-      case 'storage_locations':
-        return await tursoDb.updateStorageLocation(id, data);
-      case 'bulk_equipment_deployments':
-        return await tursoDb.updateBulkDeployment(id, data);
+        return await awsDatabase.updateJob(id, data);
+      case 'equipment':
+        return await awsDatabase.updateEquipment(id, data);
       default:
         throw new Error(`Unsupported table for update: ${table}`);
     }
@@ -131,17 +115,9 @@ export class TransactionManager {
 
     switch (table) {
       case 'jobs':
-        return await tursoDb.deleteJob(id);
-      case 'equipment_items':
-        return await tursoDb.deleteEquipmentItem(id);
-      case 'individual_equipment':
-        return await tursoDb.deleteIndividualEquipment(id);
-      case 'equipment_types':
-        return await tursoDb.deleteEquipmentType(id);
-      case 'storage_locations':
-        return await tursoDb.deleteStorageLocation(id);
-      case 'bulk_equipment_deployments':
-        return await tursoDb.deleteBulkDeployment(id);
+        return await awsDatabase.deleteJob(id);
+      case 'equipment':
+        return await awsDatabase.deleteEquipment(id);
       default:
         throw new Error(`Unsupported table for delete: ${table}`);
     }

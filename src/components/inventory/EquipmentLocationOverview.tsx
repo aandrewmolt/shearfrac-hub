@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useAwsInventory as useInventory } from '@/hooks/useAwsInventory';
 import { useJobs } from '@/hooks/useJobs';
 import { Home, Briefcase, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -42,7 +42,7 @@ export const EquipmentLocationOverview = () => {
     data.individualEquipment
       .filter(item => isEquipmentAtLocation(item, location.id, 'storage'))
       .forEach(item => {
-        const equipmentType = data.equipmentTypes.find(t => t.id === item.typeId);
+        const equipmentType = data?.equipmentTypes?.find(t => t.id === item.typeId);
         if (!equipmentType) return;
 
         if (!summary.equipment[item.typeId]) {
@@ -73,7 +73,7 @@ export const EquipmentLocationOverview = () => {
     data.individualEquipment
       .filter(item => isEquipmentAtLocation(item, job.id, 'job'))
       .forEach(item => {
-        const equipmentType = data.equipmentTypes.find(t => t.id === item.typeId);
+        const equipmentType = data?.equipmentTypes?.find(t => t.id === item.typeId);
         if (!equipmentType) return;
 
         if (!summary.equipment[item.typeId]) {
