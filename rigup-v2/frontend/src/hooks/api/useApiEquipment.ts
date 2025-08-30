@@ -94,7 +94,7 @@ export function useApiEquipment() {
   // Get equipment history
   const getEquipmentHistory = async (equipmentId: string) => {
     try {
-      return await apiClient.getEquipmentHistory(equipmentId);
+      return await equipmentCache.get(`equipment-history-${equipmentId}`, () => apiClient.getEquipmentHistory(equipmentId));
     } catch (error: any) {
       toast({
         title: 'Error',

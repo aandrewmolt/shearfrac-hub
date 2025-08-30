@@ -5,6 +5,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../services/api.client';
+import { equipmentCache } from '../../services/equipmentCache';
 import { toast } from '../use-toast';
 
 export function useApiDiagram(jobId: string | undefined) {
@@ -13,9 +14,12 @@ export function useApiDiagram(jobId: string | undefined) {
   // Get diagram for job
   const { data: diagram, isLoading, error } = useQuery({
     queryKey: ['diagram', jobId],
-    queryFn: () => jobId ? apiClient.getDiagram(jobId) : null,
+    queryFn: () => jobId ? equipmentCache.get(`diagram-${jobId}`, () => apiClient.getDiagram(jobId)) : null,
     enabled: !!jobId,
     staleTime: 10000, // 10 seconds
+    refetchOnMount: false, // Don't refetch if data exists
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnReconnect: false, // Don't refetch on reconnect
   });
   
   // Save diagram mutation
@@ -26,6 +30,8 @@ export function useApiDiagram(jobId: string | undefined) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['diagram', jobId] });
+      // Invalidate cache after save
+      if (jobId) equipmentCache.invalidate(`diagram-${jobId}`);
       toast({
         title: 'Success',
         description: 'Diagram saved successfully',

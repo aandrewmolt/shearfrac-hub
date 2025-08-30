@@ -6,15 +6,19 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { apiClient } from '../../services/api.client';
+import { equipmentCache } from '../../services/equipmentCache';
 import { toast } from '../use-toast';
 
 export function useApiSync() {
   // Get sync status
   const { data: syncStatus, refetch: refetchStatus } = useQuery({
     queryKey: ['sync-status'],
-    queryFn: () => apiClient.getSyncStatus(),
+    queryFn: () => equipmentCache.get('api-sync-status', () => apiClient.getSyncStatus()),
     staleTime: 10000, // 10 seconds
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: false, // Disable automatic refetch to prevent API floods
+    refetchOnMount: false, // Don't refetch if data exists
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnReconnect: false, // Don't refetch on reconnect
   });
   
   // Trigger sync mutation
@@ -25,8 +29,11 @@ export function useApiSync() {
         title: 'Sync Started',
         description: `Syncing ${type}...`,
       });
-      // Refetch status after a delay
-      setTimeout(() => refetchStatus(), 2000);
+      // Invalidate cache and refetch status after a delay
+      setTimeout(() => {
+        equipmentCache.invalidate('api-sync-status');
+        refetchStatus();
+      }, 2000);
     },
     onError: (error: any) => {
       toast({
@@ -45,7 +52,10 @@ export function useApiSync() {
         title: 'Full Sync Started',
         description: 'Syncing all data with ClickUp...',
       });
-      setTimeout(() => refetchStatus(), 2000);
+      setTimeout(() => {
+        equipmentCache.invalidate('api-sync-status');
+        refetchStatus();
+      }, 2000);
     },
     onError: (error: any) => {
       toast({
@@ -67,6 +77,7 @@ export function useApiSync() {
           title: 'Sync Complete',
           description: `${data.entity} synchronized`,
         });
+        equipmentCache.invalidate('api-sync-status');
         refetchStatus();
       }
     };

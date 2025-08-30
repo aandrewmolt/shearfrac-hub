@@ -1,4 +1,5 @@
 import { apiClient } from '@/services/api.client';
+import { equipmentCache } from '@/services/equipmentCache';
 
 // Script to add 5 Starlink units to inventory
 export async function addStarlinkEquipment() {
@@ -6,7 +7,7 @@ export async function addStarlinkEquipment() {
     console.log('🛰️ Adding Starlink equipment to inventory...');
     
     // First, check if Starlink equipment type exists
-    const equipmentTypes = await apiClient.getEquipment();
+    const equipmentTypes = await equipmentCache.get('script-equipment-types', () => apiClient.getEquipment());
     let starlinkType = equipmentTypes.find((type: any) => 
       type.name === 'Starlink' || type.name === 'starlink'
     );
@@ -26,10 +27,12 @@ export async function addStarlinkEquipment() {
           latency: '20-40ms'
         }
       });
+      // Invalidate cache after creating new equipment type
+      equipmentCache.invalidate('script-equipment-types');
     }
     
     // Get or create a storage location
-    const storageLocations = await apiClient.request('/api/storage-locations');
+    const storageLocations = await equipmentCache.get('script-storage-locations', () => apiClient.request('/api/storage-locations'));
     let mainStorage = storageLocations.find((loc: any) => 
       loc.name === 'Main Storage' || loc.name === 'Warehouse'
     );
@@ -45,6 +48,8 @@ export async function addStarlinkEquipment() {
           isDefault: true
         })
       });
+      // Invalidate cache after creating new storage location
+      equipmentCache.invalidate('script-storage-locations');
     }
     
     // Add 5 Starlink units
@@ -62,6 +67,8 @@ export async function addStarlinkEquipment() {
       });
       units.push(unit);
       console.log(`✅ Added Starlink unit ${i}: ${unit.serial_number}`);
+      // Invalidate equipment cache after each creation
+      equipmentCache.invalidate('script-equipment-types');
     }
     
     console.log('🎉 Successfully added 5 Starlink units to inventory!');
