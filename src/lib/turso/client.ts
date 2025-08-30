@@ -7,9 +7,10 @@ let tursoClient: ReturnType<typeof createClient> | null = null;
 class MockTursoClient {
   private storage: Map<string, unknown[]> = new Map();
   
-  async execute(sql: string, params?: unknown[]) {
+  async execute(sql: string | any, params?: unknown[]) {
     // Simple mock implementation for basic queries
-    const upperSql = sql.toUpperCase();
+    const sqlString = String(sql || '');
+    const upperSql = sqlString.toUpperCase();
     
     if (upperSql.includes('SELECT 1')) {
       return { rows: [{ '1': 1 }], columns: ['1'] };
@@ -20,14 +21,14 @@ class MockTursoClient {
     }
     
     if (upperSql.includes('SELECT') && upperSql.includes('FROM')) {
-      const tableMatch = sql.match(/FROM\s+(\w+)/i);
+      const tableMatch = sqlString.match(/FROM\s+(\w+)/i);
       const tableName = tableMatch ? tableMatch[1] : '';
       const rows = this.storage.get(tableName) || [];
       return { rows, columns: rows.length > 0 ? Object.keys(rows[0]) : [] };
     }
     
     if (upperSql.includes('INSERT INTO')) {
-      const tableMatch = sql.match(/INSERT INTO\s+(\w+)/i);
+      const tableMatch = sqlString.match(/INSERT INTO\s+(\w+)/i);
       const tableName = tableMatch ? tableMatch[1] : '';
       if (!this.storage.has(tableName)) {
         this.storage.set(tableName, []);
